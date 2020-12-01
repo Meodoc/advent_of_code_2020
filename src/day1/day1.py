@@ -1,6 +1,6 @@
 import itertools
 
-from problem import Problem
+from src.problem import Problem
 
 problem = Problem(1)
 data = problem.get_data('int')
