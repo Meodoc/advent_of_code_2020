@@ -31,7 +31,7 @@ class Problem:
         submit(answer, part=part, day=self._day)
 
         if store_answer:
-            with open('answer.txt', 'w') as fh:
+            with open(f'answer_{part}.txt', 'w') as fh:
                 if isinstance(answer, list):
                     fh.writelines('\n'.join(str(answer)))
                 else:
