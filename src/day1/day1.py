@@ -1,5 +1,4 @@
 from src.problem import Problem
-
 import itertools
 
 
