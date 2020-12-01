@@ -1,6 +1,6 @@
-import itertools
-
 from src.problem import Problem
+
+import itertools
 
 
 def part_a():
