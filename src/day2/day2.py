@@ -11,7 +11,7 @@ def part_a():
         occ = 0
         for c in password:
             if c == letter:
-               occ += 1
+                occ += 1
         if min_occ <= occ <= max_occ:
             valid_entries += 1
 
