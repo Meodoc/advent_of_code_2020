@@ -8,10 +8,7 @@ def part_a():
         max_occ = int(entry.split("-")[1].split(" ")[0])
         letter = entry.split(" ")[1].split(":")[0]
         password = entry.split(" ")[2]
-        occ = 0
-        for c in password:
-            if c == letter:
-                occ += 1
+        occ = password.count(letter)
         if min_occ <= occ <= max_occ:
             valid_entries += 1
 
