@@ -5,6 +5,9 @@ import os
 @click.command()
 @click.option('--day', '-d', help='Day you want to create')
 def create_day_stub(day):
+    if day is None:
+        print("Error: no day argument specified")
+        return
     if not os.path.exists(f'day{day}'):
         os.mkdir(f'day{day}', )
     with open(f'day{day}/day{day}.py', 'w') as fh:
