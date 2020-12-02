@@ -15,8 +15,7 @@ def create_day_stub(day):
         fh.write("def part_a():\n    return None\n\n")
         fh.write("def part_b():\n    return None\n\n")
         fh.write("if __name__ == '__main__':\n")
-        fh.write(f"    problem = Problem({day})\n")
-        fh.write("    data = problem.get_data('int')\n\n")
+        fh.write(f"    problem = Problem({day})\n\n")
         fh.write("    # problem.submit(part_a(), 'a')\n")
         fh.write("    # problem.submit(part_b(), 'b')\n")
 
