@@ -44,6 +44,5 @@ if __name__ == '__main__':
     problem = Problem(3)
     data = problem.get_data()
 
-    print(part_b())
     problem.submit(part_a(), 'a')
     problem.submit(part_b(), 'b')
