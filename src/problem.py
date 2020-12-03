@@ -10,22 +10,19 @@ class Problem:
             with open('input.in', 'w') as fh:
                 fh.writelines('\n'.join(self._data))
 
-    def get_data(self, dtype='str'):
-        if dtype == 'str':
-            return self._data
-        elif dtype == 'int':
-            return [int(line) for line in self._data]
-        elif dtype == 'float':
-            return [float(line) for line in self._data]
+    def get_data(self, dtype=str):
+        return [dtype(line) for line in self._data]
 
-    def data(self, dtype='str'):
+    def data(self, dtype=str):
         for line in self._data:
-            if dtype == 'str':
-                yield line
-            elif dtype == 'int':
-                yield int(line)
-            elif dtype == 'float':
-                yield float(line)
+            yield dtype(line)
+
+    def get_test_input(self, dtype=str):
+        return [dtype(line) for line in self._open_test_input()]
+
+    def test_input(self, dtype=str):
+        for line in self._open_test_input():
+            yield dtype(line)
 
     def submit(self, answer, part: str, store_answer=True):
         submit(answer, part=part, day=self._day)
@@ -36,3 +33,9 @@ class Problem:
                     fh.writelines('\n'.join(str(answer)))
                 else:
                     fh.write(str(answer))
+
+    # -- Helpers --
+    def _open_test_input(self):
+        with open('test.in', 'r') as fh:
+            return fh.readlines()
+
