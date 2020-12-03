@@ -7,7 +7,7 @@ class Problem:
         self._data = get_data(day=day).split('\n')
 
         if store_input:
-            with open('input.txt', 'w') as fh:
+            with open('input.in', 'w') as fh:
                 fh.writelines('\n'.join(self._data))
 
     def get_data(self, dtype='str'):
@@ -31,7 +31,7 @@ class Problem:
         submit(answer, part=part, day=self._day)
 
         if store_answer:
-            with open(f'answer_{part}.txt', 'w') as fh:
+            with open(f'answer_{part}.out', 'w') as fh:
                 if isinstance(answer, list):
                     fh.writelines('\n'.join(str(answer)))
                 else:
