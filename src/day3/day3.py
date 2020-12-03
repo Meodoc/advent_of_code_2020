@@ -14,24 +14,24 @@ def part_a():
 
 def part_b():
     n_trees = [0, 0, 0, 0, 0]
-    cols = [0, 0, 0, 0, 0]
+    c = [0, 0, 0, 0, 0]
     for r, line in enumerate(data):
-        if line[cols[0]] == '#':
+        if line[c[0]] == '#':
             n_trees[0] += 1
-        cols[0] = (cols[0] + 1) % len(line)
-        if line[cols[1]] == '#':
+        c[0] = (c[0] + 1) % len(line)
+        if line[c[1]] == '#':
             n_trees[1] += 1
-        cols[1] = (cols[1] + 3) % len(line)
-        if line[cols[2]] == '#':
+        c[1] = (c[1] + 3) % len(line)
+        if line[c[2]] == '#':
             n_trees[2] += 1
-        cols[2] = (cols[2] + 5) % len(line)
-        if line[cols[3]] == '#':
+        c[2] = (c[2] + 5) % len(line)
+        if line[c[3]] == '#':
             n_trees[3] += 1
-        cols[3] = (cols[3] + 7) % len(line)
+        c[3] = (c[3] + 7) % len(line)
         if r % 2 == 0:
-            if line[cols[4]] == '#':
+            if line[c[4]] == '#':
                 n_trees[4] += 1
-            cols[4] = (cols[4] + 1) % len(line)
+            c[4] = (c[4] + 1) % len(line)
 
     return n_trees[0] * n_trees[1] * n_trees[2] * n_trees[3] * n_trees[4]
 
@@ -40,6 +40,5 @@ if __name__ == '__main__':
     problem = Problem(3)
     data = problem.get_data()
     
-    print(part_b())
     problem.submit(part_a(), 'a')
     problem.submit(part_b(), 'b')
