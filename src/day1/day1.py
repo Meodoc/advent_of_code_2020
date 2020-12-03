@@ -16,7 +16,7 @@ def part_b():
 
 if __name__ == '__main__':
     problem = Problem(1)
-    data = problem.get_data('int')
+    data = problem.get_data(dtype=int)
 
     problem.submit(part_a(), 'a')
     problem.submit(part_b(), 'b')
