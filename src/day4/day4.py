@@ -71,8 +71,7 @@ def check_passport(fields):
 
 
 def load():
-    data = problem.data(delim='\n\n')
-    return data
+    return problem.data(delim='\n\n')
 
 
 if __name__ == '__main__':

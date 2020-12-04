@@ -15,8 +15,7 @@ def part_b():
 
 
 def load():
-    data = problem.data(dtype=int)
-    return data
+    return problem.data(dtype=int)
 
 
 if __name__ == '__main__':
