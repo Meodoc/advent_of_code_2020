@@ -1,6 +1,8 @@
 import click
 import os
 
+# TODO: make filepaths more generic and add os.path.join()
+
 
 @click.command()
 @click.option('-d', '--day', required=True, type=int, help='Day you want to create')
@@ -18,8 +20,7 @@ def create_day_stub(day: int, create_test_file: bool):
             fh.write("from src.problem import Problem\n\n\n")
             fh.write("def part_a():\n    return None\n\n\n")
             fh.write("def part_b():\n    return None\n\n\n")
-            fh.write("def load():\n    data = problem.data()\n")
-            fh.write("    return data\n\n\n")
+            fh.write("def load():\n    return problem.data()\n\n\n")
             fh.write("if __name__ == '__main__':\n")
             fh.write(f"    problem = Problem({day})\n")
             fh.write("    data = load()\n\n")
