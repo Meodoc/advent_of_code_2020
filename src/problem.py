@@ -8,7 +8,7 @@ class Problem:
 
         if store_input:
             with open('input.in', 'w') as fh:
-                fh.writelines('\n'.join(self._data))
+                fh.writelines(self._data)
 
     def raw_data(self):
         return self._data
