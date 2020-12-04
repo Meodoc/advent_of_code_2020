@@ -4,7 +4,7 @@ from aocd import get_data, submit
 class Problem:
     def __init__(self, day: int, store_input=True):
         self._day = day
-        self._data = get_data(day=day).split('\n')
+        self._data = get_data(day=day).split('\n\n')
 
         if store_input:
             with open('input.in', 'w') as fh:
@@ -37,5 +37,5 @@ class Problem:
     # -- Helpers --
     def _open_test_input(self):
         with open('test.in', 'r') as fh:
-            return fh.readlines()
+            return "".join(fh.readlines()).split('\n\n')
 
