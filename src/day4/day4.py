@@ -2,10 +2,12 @@ from src.problem import Problem
 
 import re
 
+# TODO: load methode of some sorts
+
 
 def part_a():
     valid_passports = 0
-    for document in problem.data():
+    for document in data:
         fields = re.split(' |\n', document)
         keys = [field.split(':')[0] for field in fields]
         if len(fields) == 8 or len(fields) == 7 and 'cid' not in keys:
@@ -16,13 +18,14 @@ def part_a():
 
 def part_b():
     valid_passports = 0
-    for document in problem.data():
+    for document in data:
         fields = re.split(' |\n', document)
         fields = [(field.split(':')[0], field.split(':')[1]) for field in fields]
         keys = [field[0] for field in fields]
         if len(fields) == 8 or len(fields) == 7 and 'cid' not in keys:
             if check_passport(fields):
                 valid_passports += 1
+
     return valid_passports
 
 
@@ -52,7 +55,7 @@ def check_passport(fields):
             if value[0] == '#':
                 rgb = value[1:]
                 for c in rgb:
-                    if not (c.isdigit() or c == 'a' or c == 'b' or c == 'c' or c == 'd' or c == 'e' or c == 'f'):
+                    if not (c.isdigit() or 'a' <= c <= 'f'):
                         return False
             else:
                 return False
@@ -67,9 +70,14 @@ def check_passport(fields):
     return True
 
 
+def load():
+    data = problem.data(delim='\n\n')
+    return data
+
+
 if __name__ == '__main__':
     problem = Problem(4)
+    data = load()
 
-    print(part_b())
-    problem.submit(part_a(), 'a')
-    problem.submit(part_b(), 'b')
+    problem.submit(part_a(), 'a')  # 210
+    problem.submit(part_b(), 'b')  # 131

@@ -4,7 +4,7 @@ from src.problem import Problem
 def part_a():
     n_trees = 0
     c = 0
-    for line in problem.data():
+    for line in data:
         if line[c] == '#':
             n_trees += 1
         c = (c + 3) % len(line)
@@ -15,7 +15,7 @@ def part_a():
 def part_b():
     n_trees = [0, 0, 0, 0, 0]
     c = [0, 0, 0, 0, 0]
-    for r, line in enumerate(problem.data()):
+    for r, line in enumerate(data):
         if line[c[0]] == '#':
             n_trees[0] += 1
         c[0] = (c[0] + 1) % len(line)
@@ -36,8 +36,14 @@ def part_b():
     return n_trees[0] * n_trees[1] * n_trees[2] * n_trees[3] * n_trees[4]
 
 
+def load():
+    data = problem.data()
+    return data
+
+
 if __name__ == '__main__':
     problem = Problem(3)
+    data = load()
 
-    problem.submit(part_a(), 'a')
-    problem.submit(part_b(), 'b')
+    problem.submit(part_a(), 'a')  # 292
+    problem.submit(part_b(), 'b')  # 9354744432
