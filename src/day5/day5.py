@@ -1,7 +1,5 @@
 from src.problem import Problem
 
-import collections
-
 
 def part_a():
     seat_ids = []
@@ -17,11 +15,11 @@ def part_b():
     for line in data:
         row, col = parse_boarding_pass(line)
         seat_id = row * 8 + col
-        seats[(row, col)] = seat_id
+        seats[seat_id] = (row, col)
 
-    ordered_seats = collections.OrderedDict(sorted(seats.items()))
+    ordered_seats = dict(sorted(seats.items(), key=lambda item: item[1]))
     last_id = 0
-    for pos, id in ordered_seats.items():
+    for id, pos in ordered_seats.items():
         if pos[0] == 0 or pos[0] == 127:  # ignore first and last row
             continue
         if id == last_id + 2:
