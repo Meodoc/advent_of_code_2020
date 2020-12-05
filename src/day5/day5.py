@@ -17,7 +17,7 @@ def part_b():
         seat_id = row * 8 + col
         seats[seat_id] = (row, col)
 
-    ordered_seats = dict(sorted(seats.items(), key=lambda item: item[1]))
+    ordered_seats = dict(sorted(seats.items(), key=lambda item: item[0]))
     last_id = 0
     for id, pos in ordered_seats.items():
         if pos[0] == 0 or pos[0] == 127:  # ignore first and last row
