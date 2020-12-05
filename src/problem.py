@@ -13,16 +13,8 @@ class Problem:
     def raw_data(self):
         return self._data
 
-    # def data(self, delim='\n', dtype=str):
-    #     for line in self._data.split(delim):
-    #         yield dtype(line)
-
     def data(self, delim='\n', dtype=str):
         return [dtype(line) for line in self._data.split(delim)]
-
-    # def test_data(self, delim='\n', dtype=str):
-    #     for line in self._raw_test_input().split(delim):
-    #         yield dtype(line)
 
     def test_data(self, delim='\n', dtype=str):
         return [dtype(line) for line in self._raw_test_input().split(delim)]

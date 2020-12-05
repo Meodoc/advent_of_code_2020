@@ -1,8 +1,6 @@
 import click
 import os
 
-# TODO: make filepaths more generic and add os.path.join()
-
 
 @click.command()
 @click.option('-d', '--day', required=True, type=int, help='Day you want to create')
