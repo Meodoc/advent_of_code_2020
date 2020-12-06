@@ -17,10 +17,7 @@ if __name__ == '__main__':
     problem = Problem(6)
     data = load()
 
-
-    print(part_a())
-    print(part_b())
-    #problem.submit(part_a(), 'a')  # 6625
-    #problem.submit(part_b(), 'b')
+    problem.submit(part_a(), 'a')  # 6625
+    problem.submit(part_b(), 'b')  # 3360
 
 
