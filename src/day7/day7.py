@@ -1,5 +1,5 @@
 from src.problem import Problem
-from day7.bag import Bag
+from src.day7.bag import Bag
 
 import pickle as pkl
 
