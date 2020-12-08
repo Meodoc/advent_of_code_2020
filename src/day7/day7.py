@@ -106,8 +106,5 @@ if __name__ == '__main__':
     for tree in trees:
         find_nodes('shiny gold bag', tree, shiny_gold_bags)
 
-    print(part_a())
-    print(part_b())
-
     problem.submit(part_a(), 'a')  # 124
     problem.submit(part_b(), 'b')  # 34862
