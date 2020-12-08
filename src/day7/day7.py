@@ -85,7 +85,6 @@ def debug_print_entries(entries):
 
 def pickle_trees():
     entries = parse_nodes(problem.data())
-    debug_print_entries(entries)
     trees = build_trees(entries)
     with open('trees.pkl', 'wb') as fh:
         pkl.dump(trees, fh)
