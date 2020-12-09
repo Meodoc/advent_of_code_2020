@@ -30,7 +30,7 @@ def interpret(code):
         for idx, cmd in instruction.items():
             if idx in visited:
                 return acc, False
-            pc, acc = [v(pc, acc, int(cmd[1])) for k, v in INSTRUCTIONS.items() if k == cmd[0]][0]
+            pc, acc = INSTRUCTIONS[cmd[0]](pc, acc, int(cmd[1]))
             visited.add(idx)
             if pc == len(code):
                 return acc, True
@@ -54,6 +54,9 @@ def load():
 if __name__ == '__main__':
     problem = Problem(8)
     data = load()
+
+    print(part_a())
+    print(part_b())
 
     problem.submit(part_a(), 'a')  # 1134
     problem.submit(part_b(), 'b')  # 1205
