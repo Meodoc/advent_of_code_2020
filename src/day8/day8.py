@@ -1,0 +1,59 @@
+from src.problem import Problem
+
+import copy
+
+INSTRUCTIONS = {"nop": lambda pc, acc, param: (pc + 1, acc),
+                "acc": lambda pc, acc, param: (pc + 1, acc + param),
+                "jmp": lambda pc, acc, param: (pc + param, acc)}
+
+
+def part_a():
+    acc, _ = interpret(data)
+    return acc
+
+
+def part_b():
+    last_changed = 0
+    while True:
+        patched_data, last_changed = switch_next_instruction(copy.deepcopy(data), last_changed)
+        acc, finished = interpret(patched_data)
+        if finished:
+            return acc
+
+
+def interpret(code):
+    visited = set()
+    pc = 0
+    acc = 0
+    while True:
+        instruction = code[pc]
+        for idx, cmd in instruction.items():
+            if idx in visited:
+                return acc, False
+            pc, acc = [v(pc, acc, int(cmd[1])) for k, v in INSTRUCTIONS.items() if k == cmd[0]][0]
+            visited.add(idx)
+            if pc == len(code):
+                return acc, True
+
+
+def switch_next_instruction(data, last_changed: int):
+    for instruction in data[last_changed + 1:]:
+        for idx, cmd in instruction.items():
+            if cmd[0] == "jmp":
+                data[idx][idx] = ("nop", cmd[1])
+                return data, idx
+            if cmd[0] == "nop":
+                data[idx][idx] = ("jmp", cmd[1])
+                return data, idx
+
+
+def load():
+    return [{idx: line.split(" ")} for idx, line in enumerate(problem.data())]
+
+
+if __name__ == '__main__':
+    problem = Problem(8)
+    data = load()
+
+    problem.submit(part_a(), 'a')  # 1134
+    problem.submit(part_b(), 'b')  # 1205
