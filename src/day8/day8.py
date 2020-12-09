@@ -13,9 +13,9 @@ def part_a():
 
 
 def part_b():
-    last_changed = 0
+    flip_next_instruction.last = 0
     while True:
-        patched_data, last_changed = switch_next_instruction(copy.deepcopy(data), last_changed)
+        patched_data = flip_next_instruction(copy.deepcopy(data))
         acc, finished = interpret(patched_data)
         if finished:
             return acc
@@ -23,32 +23,33 @@ def part_b():
 
 def interpret(code):
     visited = set()
-    pc = 0
-    acc = 0
+    pc = acc = 0
     while True:
         instruction = code[pc]
         for idx, cmd in instruction.items():
             if idx in visited:
                 return acc, False
-            pc, acc = INSTRUCTIONS[cmd[0]](pc, acc, int(cmd[1]))
+            pc, acc = INSTRUCTIONS[cmd[0]](pc, acc, cmd[1])
             visited.add(idx)
             if pc == len(code):
                 return acc, True
 
 
-def switch_next_instruction(data, last_changed: int):
-    for instruction in data[last_changed + 1:]:
+def flip_next_instruction(data):
+    for instruction in data[flip_next_instruction.last + 1:]:
         for idx, cmd in instruction.items():
             if cmd[0] == "jmp":
                 data[idx][idx] = ("nop", cmd[1])
-                return data, idx
+                flip_next_instruction.last = idx
+                return data
             if cmd[0] == "nop":
                 data[idx][idx] = ("jmp", cmd[1])
-                return data, idx
+                flip_next_instruction.last = idx
+                return data
 
 
 def load():
-    return [{idx: line.split(" ")} for idx, line in enumerate(problem.data())]
+    return [{idx: (line.split(" ")[0], int(line.split(" ")[1]))} for idx, line in enumerate(problem.data())]
 
 
 if __name__ == '__main__':
