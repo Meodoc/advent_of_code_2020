@@ -36,8 +36,8 @@ def interpret(code):
 
 
 def swap_next(data):
-    next_instruction = next(i.items() for i in data[swap_next.last + 1:] for k, v in i.items() if v[0] in ["jmp", "nop"])
-    for idx, cmd in next_instruction:
+    next_instruction = next(i for i in data[swap_next.last + 1:] for k, v in i.items() if v[0] in ["jmp", "nop"])
+    for idx, cmd in next_instruction.items():
         if cmd[0] == "jmp":
             data[idx][idx] = ("nop", cmd[1])
         else:
