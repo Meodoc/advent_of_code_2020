@@ -12,9 +12,9 @@ def part_a():
 
 def part_b():
     for start, _ in enumerate(data):
-        for end, acc in enumerate(it.accumulate(data[start:])):
+        for end, acc in enumerate(it.accumulate(data[start:]), start):
             if acc == invalid_num:
-                return min(data[start:start + end]) + max(data[start:start + end])
+                return min(data[start:end]) + max(data[start:end])
             if acc > invalid_num:
                 break
 
@@ -28,6 +28,9 @@ if __name__ == '__main__':
     data = load()
 
     invalid_num = part_a()
+
+    print(part_a())
+    print(part_b())
 
     problem.submit(invalid_num, 'a')  # 85848519
     problem.submit(part_b(), 'b')  # 13414198
