@@ -54,8 +54,5 @@ if __name__ == '__main__':
     problem = Problem(8)
     data = load()
 
-    print(part_a())
-    print(part_b())
-
     problem.submit(part_a(), 'a')  # 1134
     problem.submit(part_b(), 'b')  # 1205
