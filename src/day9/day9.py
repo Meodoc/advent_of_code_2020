@@ -29,8 +29,5 @@ if __name__ == '__main__':
 
     invalid_num = part_a()
 
-    print(part_a())
-    print(part_b())
-
     problem.submit(invalid_num, 'a')  # 85848519
     problem.submit(part_b(), 'b')  # 13414198
