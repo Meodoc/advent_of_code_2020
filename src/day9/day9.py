@@ -30,4 +30,4 @@ if __name__ == '__main__':
     invalid_num = part_a()
 
     problem.submit(invalid_num, 'a')  # 85848519
-    problem.submit(part_b(), 'b')  # 3626190 too low
+    problem.submit(part_b(), 'b')  # 13414198
