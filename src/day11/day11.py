@@ -16,6 +16,49 @@ POLICY_B = {FREE: lambda r, c, seats: OCCUPIED if _n_visible_occupied(r, c, seat
             FLOOR: lambda r, c, seats: FLOOR}
 
 
+def _free_occ_iter(seats):
+    return it.filterfalse(lambda t: seats[t[0]][t[1]] == FLOOR, it.product(range(len(data)), range(len(data[0]))))
+
+
+def part_a():
+    return n_occupied_in_equilibrium(data, 'a')
+
+
+def part_b():
+    return n_occupied_in_equilibrium(data, 'b')
+
+
+def n_occupied_in_equilibrium(data, policy):
+    state = copy.deepcopy(data)
+    prev_state = None
+    while True:
+        state = apply_policy(state, policy)
+        if prev_state and \
+                all(prev_state[r][c] == state[r][c] for r, c in _free_occ_iter(state)):
+            break
+        prev_state = state
+    return sum(r.count(OCCUPIED) for r in state)
+
+
+def apply_policy(seats, policy):
+    new_seats = copy.deepcopy(seats)
+    for r, c in _free_occ_iter(seats):
+        new_seats[r][c] = POLICY_A[seats[r][c]](r, c, seats) if policy == 'a' else POLICY_B[seats[r][c]](r, c, seats)
+    return new_seats
+
+
+def load():
+    return [[col for col in row] for row in problem.data()]
+
+
+if __name__ == '__main__':
+    problem = Problem(11)
+    data = load()
+
+    problem.submit(part_a(), 'a')  # 2243
+    problem.submit(part_b(), 'b')  # 2027
+
+
 def _n_adj_occupied(r0, c0, seats):
     n = 0
     for r, c in it.filterfalse(lambda t: t == (r0, c0), it.product(range(r0 - 1, r0 + 2), range(c0 - 1, c0 + 2))):
@@ -84,46 +127,3 @@ def _n_visible_occupied(r0, c0, seats):
         if seats[r][c] == FREE:
             break
     return n
-
-
-def _free_occ_iter(seats):
-    return it.filterfalse(lambda t: seats[t[0]][t[1]] == FLOOR, it.product(range(len(data)), range(len(data[0]))))
-
-
-def part_a():
-    return n_occupied_in_equilibrium(data, 'a')
-
-
-def part_b():
-    return n_occupied_in_equilibrium(data, 'b')
-
-
-def n_occupied_in_equilibrium(data, policy):
-    state = copy.deepcopy(data)
-    prev_state = None
-    while True:
-        state = apply_policy(state, policy)
-        if prev_state and \
-                all(prev_state[r][c] == state[r][c] for r, c in _free_occ_iter(state)):
-            break
-        prev_state = state
-    return sum(r.count(OCCUPIED) for r in state)
-
-
-def apply_policy(seats, policy):
-    new_seats = copy.deepcopy(seats)
-    for r, c in _free_occ_iter(seats):
-        new_seats[r][c] = POLICY_A[seats[r][c]](r, c, seats) if policy == 'a' else POLICY_B[seats[r][c]](r, c, seats)
-    return new_seats
-
-
-def load():
-    return [[col for col in row] for row in problem.data()]
-
-
-if __name__ == '__main__':
-    problem = Problem(11)
-    data = load()
-
-    problem.submit(part_a(), 'a')  # 2243
-    problem.submit(part_b(), 'b')  # 2027
