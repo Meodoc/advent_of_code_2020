@@ -83,7 +83,6 @@ def _n_visible_occupied(r0, c0, seats):
             break
         if seats[r][c0] == FREE:
             break
-
     # Right
     for c in range(c0 + 1, len(seats[0])):
         if seats[r0][c] == OCCUPIED:
