@@ -2,8 +2,6 @@ from src.problem import Problem
 
 import re
 
-# TODO: load methode of some sorts
-
 
 def part_a():
     valid_passports = 0

@@ -7,7 +7,8 @@ class Problem:
         self._data = get_data(day=day)
 
         if store_input:
-            with open('input.in', 'w') as fh:
+            print()
+            with open(f'../../data/day{day}/input.in', 'w') as fh:
                 fh.writelines(self._data)
 
     def raw_data(self):
@@ -23,7 +24,7 @@ class Problem:
         submit(answer, part=part, day=self._day)
 
         if store_answer:
-            with open(f'part_{part}.out', 'w') as fh:
+            with open(f'../../data/day{self._day}/{part}.out', 'w') as fh:
                 if isinstance(answer, list):
                     fh.writelines('\n'.join(str(answer)))
                 else:

@@ -67,6 +67,7 @@ def _n_adj_occupied(r0, c0, seats):
     return n
 
 
+# Sorry for that ugly solution
 def _n_visible_occupied(r0, c0, seats):
     n = 0
     # Down
