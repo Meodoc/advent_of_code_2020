@@ -51,14 +51,6 @@ def load():
     return [[col for col in row] for row in problem.data()]
 
 
-if __name__ == '__main__':
-    problem = Problem(11)
-    data = load()
-
-    problem.submit(part_a(), 'a')  # 2243
-    problem.submit(part_b(), 'b')  # 2027
-
-
 def _n_adj_occupied(r0, c0, seats):
     n = 0
     for r, c in it.filterfalse(lambda t: t == (r0, c0), it.product(range(r0 - 1, r0 + 2), range(c0 - 1, c0 + 2))):
@@ -127,3 +119,11 @@ def _n_visible_occupied(r0, c0, seats):
         if seats[r][c] == FREE:
             break
     return n
+
+
+if __name__ == '__main__':
+    problem = Problem(11)
+    data = load()
+
+    problem.submit(part_a(), 'a')  # 2243
+    problem.submit(part_b(), 'b')  # 2027
