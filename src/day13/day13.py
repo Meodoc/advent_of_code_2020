@@ -15,8 +15,7 @@ def part_b():
     # https://www.youtube.com/watch?v=zIFehsBHB8o
 
     # Ensure that the gcd of all the bus id's is 1 for the theorem to apply
-    ids = bus_data[1:]
-    assert max(gcd(c[0], c[1]) for c in combinations(ids, 2)) == 1
+    assert max(gcd(c[0], c[1]) for c in combinations(ids := bus_data[1:], 2)) == 1
 
     # Calculate factor lists
     b = [id - offset for offset, id in enumerate(data[1:]) if id != 'x']
