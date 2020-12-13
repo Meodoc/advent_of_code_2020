@@ -19,15 +19,15 @@ def part_b():
 
     # Calculate factor lists
     ids = [id for id in bus_data[1:]]
-    b = [int(id) - offset for offset, id in enumerate(data[1:]) if id != 'x']
-    N = [prod([id for i, id in enumerate(ids) if i != j]) for j in range(len(ids))]
-    x = [pow(N[i], -1, ids[i]) for i in range(len(ids))]
+    b = [id - offset for offset, id in enumerate(data[1:]) if id != 'x']
+    N = [prod(id for i, id in enumerate(ids) if i != j) for j in range(len(ids))]
+    x = [pow(N[i], -1, ids[i]) for i in range(len(ids))]  # -1 argument specifies to calculate the inverse number
 
     # Calculate result
     x = sum(b[i] * N[i] * x[i] for i in range(len(ids)))
 
     # Minimal result is the smallest x in the mod (id1 * id2, ..., * idn) space that is > 0
-    return min_num_in_mod(x, prod([id for id in ids]))
+    return min_num_in_mod(x, prod(id for id in ids))
 
 
 def min_num_in_mod(x, m):
@@ -37,13 +37,13 @@ def min_num_in_mod(x, m):
 
 
 def load():
-    return [int(problem.data()[0])] + [b for b in problem.data()[1].split(',')]
+    return [int(problem.data()[0])] + [int(b) if b != 'x' else b for b in problem.data()[1].split(',')]
 
 
 if __name__ == '__main__':
     problem = Problem(13)
     data = load()
-    bus_data = [int(d) for d in filter(lambda b: b != 'x', data)]
+    bus_data = list(filter(lambda b: b != 'x', data))
 
     problem.submit(part_a(), 'a')  # 8063
     problem.submit(part_b(), 'b')  # 775230782877242
