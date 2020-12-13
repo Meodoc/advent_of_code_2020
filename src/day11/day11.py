@@ -3,6 +3,7 @@ from src.problem import Problem
 import copy
 import itertools as it
 
+
 FREE = "L"
 OCCUPIED = "#"
 FLOOR = "."
