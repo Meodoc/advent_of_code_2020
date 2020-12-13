@@ -15,10 +15,10 @@ def part_b():
     # https://www.youtube.com/watch?v=zIFehsBHB8o
 
     # Ensure that the gcd of all the bus id's is 1 for the theorem to apply
-    assert max(gcd(c[0], c[1]) for c in combinations(bus_data[1:], 2)) == 1
+    ids = bus_data[1:]
+    assert max(gcd(c[0], c[1]) for c in combinations(ids, 2)) == 1
 
     # Calculate factor lists
-    ids = bus_data[1:]
     b = [id - offset for offset, id in enumerate(data[1:]) if id != 'x']
     N = [prod(id for i, id in enumerate(ids) if i != j) for j in range(len(ids))]
     x = [pow(N[i], -1, ids[i]) for i in range(len(ids))]  # -1 argument specifies to calculate the inverse number
