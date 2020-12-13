@@ -27,11 +27,13 @@ def part_b():
     x = sum(b[i] * N[i] * x[i] for i in range(len(ids)))
 
     # Minimal result is the smallest x in the mod (id1 * id2, ..., * idn) space that is > 0
-    return find_min_result(x, prod([id for id in ids]))
+    return min_num_in_mod(x, prod([id for id in ids]))
 
 
-def find_min_result(x, y):
-    return x - floor(x/y) * y
+def min_num_in_mod(x, m):
+    # Subtract size of mod-space 'm' n amount of times from number 'x' in mod-space 'm',
+    # so that it is the smallest equal number > 0 in mod-space 'm'
+    return x - floor(x / m) * m
 
 
 def load():
