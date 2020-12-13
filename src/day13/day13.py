@@ -18,7 +18,7 @@ def part_b():
     assert max(gcd(c[0], c[1]) for c in combinations(bus_data[1:], 2)) == 1
 
     # Calculate factor lists
-    ids = [id for id in (bus_data[1:])]
+    ids = [id for id in bus_data[1:]]
     b = [int(id) - offset for offset, id in enumerate(data[1:]) if id != 'x']
     N = [prod([id for i, id in enumerate(ids) if i != j]) for j in range(len(ids))]
     x = [pow(N[i], -1, ids[i]) for i in range(len(ids))]
