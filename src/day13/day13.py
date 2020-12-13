@@ -18,7 +18,7 @@ def part_b():
     assert max(gcd(c[0], c[1]) for c in combinations(bus_data[1:], 2)) == 1
 
     # Calculate factor lists
-    ids = [id for id in bus_data[1:]]
+    ids = bus_data[1:]
     b = [id - offset for offset, id in enumerate(data[1:]) if id != 'x']
     N = [prod(id for i, id in enumerate(ids) if i != j) for j in range(len(ids))]
     x = [pow(N[i], -1, ids[i]) for i in range(len(ids))]  # -1 argument specifies to calculate the inverse number
@@ -27,7 +27,7 @@ def part_b():
     x = sum(b[i] * N[i] * x[i] for i in range(len(ids)))
 
     # Minimal result is the smallest x in the mod (id1 * id2, ..., * idn) space that is > 0
-    return min_num_in_mod(x, prod(id for id in ids))
+    return min_num_in_mod(x, prod(ids))
 
 
 def min_num_in_mod(x, m):
