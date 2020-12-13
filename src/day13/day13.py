@@ -19,7 +19,7 @@ def part_b():
 
     # Calculate factor lists
     ids = [id for id in (bus_data[1:])]
-    b = [int(id) - offset for offset, id in (enumerate(data[1:])) if id != 'x']
+    b = [int(id) - offset for offset, id in enumerate(data[1:]) if id != 'x']
     N = [prod([id for i, id in enumerate(ids) if i != j]) for j in range(len(ids))]
     x = [pow(N[i], -1, ids[i]) for i in range(len(ids))]
 
