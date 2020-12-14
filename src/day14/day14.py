@@ -7,8 +7,8 @@ import re
 UPDATE_MASK = 'mask'
 STORE = 'mem'
 
-PATTERNS = [re.compile(r'^(mask) = ([X|\d]+)'),
-            re.compile(r'^(mem)\[(\d+)] = (\d+)')]
+PATTERNS = [re.compile(fr'^({UPDATE_MASK}) = ([X|\d]+)'),
+            re.compile(fr'^({STORE})\[(\d+)] = (\d+)')]
 
 
 @dataclass
