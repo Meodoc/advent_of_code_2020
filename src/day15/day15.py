@@ -17,10 +17,7 @@ def play(turns):
     memory = deepcopy(data)
     last_num = list(data.keys())[-1]
     for turn in range(len(data) + 1, turns + 1):
-        if len(memory[last_num]) == 1:
-            last_num = 0
-        else:
-            last_num = memory[last_num][1] - memory[last_num][0]
+        last_num = 0 if len(memory[last_num]) == 1 else memory[last_num][1] - memory[last_num][0]
         memory[last_num].append(turn)
     return last_num
 
