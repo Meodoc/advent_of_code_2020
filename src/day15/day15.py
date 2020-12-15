@@ -1,8 +1,6 @@
 from src.problem import Problem
 
-from collections import deque, defaultdict
 from copy import deepcopy
-from functools import partial
 
 
 def part_a():
@@ -16,15 +14,13 @@ def part_b():
 def play(turns):
     memory = deepcopy(data)
     last_num = list(data.keys())[-1]
-    for turn in range(len(data) + 1, turns + 1):
-        last_num = 0 if len(memory[last_num]) == 1 else memory[last_num][1] - memory[last_num][0]
-        memory[last_num].append(turn)
+    for turn in range(len(data), turns):
+        memory[last_num], last_num = turn, 0 if last_num not in memory else turn - memory[last_num]
     return last_num
 
 
 def load():
-    return defaultdict(partial(deque, maxlen=2), {int(num): deque([turn], maxlen=2)
-                                                  for turn, num in enumerate(problem.data()[0].split(','), 1)})
+    return {int(num): turn for turn, num in enumerate(problem.data()[0].split(','), 1)}
 
 
 if __name__ == '__main__':
