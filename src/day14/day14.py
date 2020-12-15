@@ -1,6 +1,5 @@
 from src.problem import Problem
 
-from dataclasses import dataclass
 from itertools import product
 import re
 
@@ -14,10 +13,9 @@ PATTERNS = [re.compile(fr'^({UPDATE_MASK}) = ([X|\d]+)'),
             re.compile(fr'^({STORE})\[(\d+)] = (\d+)')]
 
 
-@dataclass
 class Decoder:
-    bitmask = [0, 0]
     memory = dict()
+    bitmask = [0, 0]
 
     def interpret(self, cmd, args) -> None:
         if cmd == UPDATE_MASK:
@@ -37,14 +35,15 @@ class Decoder:
 
 
 class QuantumDecoder(Decoder):
+    memory = dict()
     bitmask: int
     q_indices: list
 
     def _store(self, adr: str, val: str) -> None:
-        for p in product([0, 1], repeat=len(self.q_indices)):
+        for p in product('01', repeat=len(self.q_indices)):
             q_adr = self.int_to_bin_str(int(adr), BITMASK_LEN)
             for i in range(len(self.q_indices)):
-                q_adr = self.replace_at_index(q_adr, str(p[i]), self.q_indices[i])
+                q_adr = self.replace_at_index(q_adr, p[i], self.q_indices[i])
             q_adr = int(q_adr, 2) | self.bitmask
             self.memory[q_adr] = int(val)
 
