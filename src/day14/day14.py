@@ -53,11 +53,11 @@ class QuantumDecoder(Decoder):
         self.q_indices = [f.start() for f in re.finditer('X', mask)]
 
     @staticmethod
-    def int_to_bin_str(val: int, l: int):
+    def int_to_bin_str(val: int, l: int) -> str:
         return format(val, 'b').zfill(l)
 
     @staticmethod
-    def replace_at_index(s: str, r: str, idx: int):
+    def replace_at_index(s: str, r: str, idx: int) -> str:
         return s[:idx] + r + s[idx + 1:]
 
 
