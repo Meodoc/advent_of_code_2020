@@ -16,14 +16,12 @@ def part_b():
 def play(turns):
     memory = deepcopy(data)
     last_num = list(data.keys())[-1]
-    turn = len(data) + 1
-    while turn <= turns:
+    for turn in range(len(data) + 1, turns + 1):
         if len(memory[last_num]) == 1:
             last_num = 0
         else:
             last_num = memory[last_num][1] - memory[last_num][0]
         memory[last_num].append(turn)
-        turn += 1
     return last_num
 
 
@@ -35,6 +33,8 @@ def load():
 if __name__ == '__main__':
     problem = Problem(15)
     data = load()
+
+    print(part_a())
 
     problem.submit(part_a(), 'a')  # 1194
     problem.submit(part_b(), 'b')  # 48710
