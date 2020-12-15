@@ -1,8 +1,8 @@
 from src.problem import Problem
 
 from collections import deque, defaultdict
-from functools import partial
 from copy import deepcopy
+from functools import partial
 
 
 def part_a():
