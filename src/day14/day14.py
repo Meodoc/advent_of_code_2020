@@ -49,7 +49,7 @@ class QuantumDecoder(Decoder):
 
     def _update_mask(self, mask: str) -> None:
         self.bitmask = int(mask.replace('X', '0'), 2)
-        self.q_indices = [f.start() for f in re.finditer('X', mask)]
+        self.q_indices = [i for i, bit in enumerate(mask) if bit == 'X']
 
     @staticmethod
     def int_to_bin_str(val: int, l: int) -> str:
