@@ -21,11 +21,7 @@ def part_b():
     valid_tickets = [ticket for ticket in data[2]
                      if all(any(rules[r](field) for r, _ in rules.items()) for field in ticket.split(','))]
 
-    # Algorithm uniquely identifies the rule for each field position and stores them in a dict:
-    #  The algorithm searches for every position 'pos' a rule that uniquely applies to the position, meaning no other
-    #  rule is allowed to apply to this position. Once such a rule is found, its position is certain and can therefore
-    #  be added to the 'rule_positions' dict. Then the search for the next rule begins again from the position 0.
-    #  The algorithm is finished once it finds a position for every rule.
+    # Searches for unique rules until there is a rule entry for every data position in the 'rule_positions' dict
     rule_positions = dict()
     while len(rule_positions) < (len(data[1].split(','))):
         rule, pos = find_unique_rule(rules, valid_tickets)
@@ -37,19 +33,21 @@ def part_b():
                 [r_pos for rule, r_pos in rule_positions.items() if rule.startswith('departure')])
 
 
+#  Searches for every position 'pos' a rule that uniquely applies to the position, meaning no other rule is allowed to
+#  apply to this position.
 def find_unique_rule(rules: dict, tickets: list):
     for pos in range(len(tickets[0].split(','))):
-        applying_rule = None
+        unique_rule = None
         for r, _ in rules.items():
             # Check if rule applies for every ticket at current position 'pos'
             if all(rules[r](ticket.split(',')[pos]) for ticket in tickets):
-                if applying_rule:  # If more then one rule applies to the position, skip the position
-                    applying_rule = None
+                if unique_rule:  # If more then one rule applies to the position, skip the position
+                    unique_rule = None
                     break
-                applying_rule = (r, pos)
+                unique_rule = (r, pos)
         # If unique rule was found, return it
-        if applying_rule:
-            return applying_rule
+        if unique_rule:
+            return unique_rule
 
 
 def load():
