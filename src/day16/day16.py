@@ -22,7 +22,11 @@ def part_b():
     valid_tickets = [ticket for ticket in data[2]
                      if all(any(rules[r](field) for r, _ in rules.items()) for field in ticket.split(','))]
 
-    # Algorithm finds the positions of all the fields and stores them in a dict
+    # Algorithm uniquely identifies the rule for each field position and stores them in a dict:
+    #  The algorithm searches for every position 'pos' a rule that uniquely applies to the position, meaning no other
+    #  rule is allowed to apply to this position. Once such a rule is found, its position is certain and can therefore
+    #  be added to the 'rule_positions' dict. Then the search for the next rule begins again from the position 0.
+    #  The algorithm is finished once it finds a position for every rule.
     rule_positions = dict()
     while len(rule_positions) < (n_fields := len(data[1].split(','))):
         for pos in range(n_fields):
