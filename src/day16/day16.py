@@ -66,7 +66,5 @@ if __name__ == '__main__':
     rules = {(m := RULE_PATTERN.match(line)).group(1): _rule_closure(m.group(2), m.group(3), m.group(4), m.group(5))
              for line in data[0]}
 
-    print(part_b())
-
     problem.submit(part_a(), 'a')  # 20091
-    #problem.submit(part_b(), 'b')  # 2325343130651
+    problem.submit(part_b(), 'b')  # 2325343130651
