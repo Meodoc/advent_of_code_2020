@@ -43,7 +43,7 @@ def convolve_cubes(grid: np.ndarray, kernel: np.ndarray):
 
 
 def map_cube_states(c):
-    return 1 if c in [102, 103] or c == 3 else 0
+    return ACTIVE if c in [102, 103] or c == 3 else INACTIVE
 
 
 def load():
