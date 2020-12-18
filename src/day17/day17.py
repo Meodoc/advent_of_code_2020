@@ -1,25 +1,13 @@
 from src.problem import Problem
 
 import numpy as np
-from funcy import lmap
 from scipy.signal import convolve
 
-ACTIVE = 1
-INACTIVE = 0
+KERNEL_3D = np.ones((3, 3, 3), dtype=np.int64)
+KERNEL_3D[1][1][1] = 100
 
-KERNEL_3D = np.array([
-    np.ones((3, 3)),
-    [[1, 1, 1],
-     [1, 100, 1],
-     [1, 1, 1]],
-    np.ones((3, 3))
-], dtype=np.int64)
-
-KERNEL_4D = np.array([
-    [np.ones((3, 3)), np.ones((3, 3)), np.ones((3, 3))],
-    KERNEL_3D,
-    [np.ones((3, 3)), np.ones((3, 3)), np.ones((3, 3))]
-], dtype=np.int64)
+KERNEL_4D = np.ones((3, 3, 3, 3), dtype=np.int64)
+KERNEL_4D[1][1][1][1] = 100
 
 
 def part_a():
@@ -38,16 +26,12 @@ def part_b():
 
 def convolve_cubes(grid: np.ndarray, kernel: np.ndarray):
     c = convolve(grid, kernel, mode='full')
-    c = np.vectorize(map_cube_states)(c)
+    c = np.vectorize(lambda elem: elem in [3, 102, 103])(c)
     return c
 
 
-def map_cube_states(c):
-    return ACTIVE if c in [102, 103] or c == 3 else INACTIVE
-
-
 def load():
-    return np.array([lmap(lambda c: ACTIVE if c == '#' else INACTIVE, line) for line in problem.data()], dtype=np.int64)
+    return np.array([list(line) for line in problem.data()]) == '#'
 
 
 if __name__ == '__main__':
