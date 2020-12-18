@@ -25,9 +25,8 @@ def part_b():
 
 
 def convolve_cubes(grid: np.ndarray, kernel: np.ndarray):
-    c = convolve(grid, kernel, mode='full')
-    c = np.vectorize(lambda elem: elem in [3, 102, 103])(c)
-    return c
+    c = convolve(grid, kernel)
+    return np.vectorize(lambda elem: elem in [3, 102, 103])(c)
 
 
 def load():
