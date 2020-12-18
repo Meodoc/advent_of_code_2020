@@ -7,50 +7,52 @@ from scipy.signal import convolve
 ACTIVE = 1
 INACTIVE = 0
 
-KERNEL = np.array([
+KERNEL_3D = np.array([
+    np.ones((3, 3)),
     [[1, 1, 1],
-     [1, 1, 1],
+     [1, 100, 1],
      [1, 1, 1]],
-    [[1, 1, 1],
-     [1, 10, 1],
-     [1, 1, 1]],
-    [[1, 1, 1],
-     [1, 1, 1],
-     [1, 1, 1]]])
+    np.ones((3, 3))
+], dtype=np.int64)
+
+KERNEL_4D = np.array([
+    [np.ones((3, 3)), np.ones((3, 3)), np.ones((3, 3))],
+    KERNEL_3D,
+    [np.ones((3, 3)), np.ones((3, 3)), np.ones((3, 3))]
+], dtype=np.int64)
 
 
-def part_a(data):
+def part_a():
+    pocket_dim = np.expand_dims(data, axis=0)
     for _ in range(6):
-        data = convolve_cubes(data)
-    return np.count_nonzero(data == 1)
+        pocket_dim = convolve_cubes(pocket_dim, KERNEL_3D)
+    return np.count_nonzero(pocket_dim == 1)
 
 
 def part_b():
-    return None
+    pocket_dim = np.expand_dims(np.expand_dims(data, axis=0), axis=0)
+    for _ in range(6):
+        pocket_dim = convolve_cubes(pocket_dim, KERNEL_4D)
+    return np.count_nonzero(pocket_dim == 1)
 
 
-def convolve_cubes(data: np.ndarray):
-    c = convolve(data, KERNEL, mode='full')
-    for i, x in enumerate(c):
-        for j, y in enumerate(x):
-            for k, _ in enumerate(y):
-                if c[i][j][k] > 10:
-                    c[i][j][k] = 1 if c[i][j][k] in [12, 13] else 0
-                elif c[i][j][k] < 10:
-                    c[i][j][k] = 1 if c[i][j][k] == 3 else 0
+def convolve_cubes(grid: np.ndarray, kernel: np.ndarray):
+    c = convolve(grid, kernel, mode='full')
+    c = np.vectorize(map_cube_states)(c)
     return c
 
 
+def map_cube_states(c):
+    return 1 if c in [102, 103] or c == 3 else 0
+
+
 def load():
-    dim = len(problem.data()[0])
-    zeros = np.zeros((dim, dim), dtype=np.int64)
-    init = np.array([lmap(lambda c: ACTIVE if c == '#' else INACTIVE, line) for line in problem.data()], dtype=np.int64)
-    return np.stack((zeros, init, zeros))
+    return np.array([lmap(lambda c: ACTIVE if c == '#' else INACTIVE, line) for line in problem.data()])
 
 
 if __name__ == '__main__':
     problem = Problem(17)
     data = load()
 
-    problem.submit(part_a(data), 'a')
-    # problem.submit(part_b(), 'b')
+    problem.submit(part_a(), 'a')  # 295
+    problem.submit(part_b(), 'b')  # 1972
