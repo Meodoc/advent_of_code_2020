@@ -47,7 +47,7 @@ def map_cube_states(c):
 
 
 def load():
-    return np.array([lmap(lambda c: ACTIVE if c == '#' else INACTIVE, line) for line in problem.data()])
+    return np.array([lmap(lambda c: ACTIVE if c == '#' else INACTIVE, line) for line in problem.data()], dtype=np.int64)
 
 
 if __name__ == '__main__':
