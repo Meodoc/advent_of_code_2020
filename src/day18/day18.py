@@ -1,10 +1,8 @@
 from src.problem import Problem
 
-from dataclasses import dataclass
 from enum import Enum
 
 
-@dataclass
 class Token:
     class Kind(Enum):
         number = "number",
@@ -171,14 +169,14 @@ class PunstriParser(Parser):
 
 def part_a(data: str):
     parser = LRParser(data)
-    for i in range(len(data.split('\n'))):
+    for _ in range(len(data.split('\n'))):
         parser.parse()
     return parser.sum_results()
 
 
 def part_b(data: str):
     parser = PunstriParser(data)
-    for i in range(len(data.split('\n'))):
+    for _ in range(len(data.split('\n'))):
         parser.parse()
     return parser.sum_results()
 
