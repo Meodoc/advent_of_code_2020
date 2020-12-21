@@ -13,7 +13,9 @@ class Token:
         lpar = "(",
         rpar = ")",
         eol = "eol",
+        eof = "eof",
         none = "none"
+
     kind: Kind = Kind.none
     val: int = 0
 
@@ -28,13 +30,15 @@ class Scanner:
         self._next_ch()
 
     def next(self):
-        while self.ch.isspace():
+        while self.ch == ' ':
             self._next_ch()
 
         token = Token()
 
         if '0' <= self.ch <= '9':
-            self._read_number(token)
+            token.kind = Token.Kind.number
+            token.val = int(self.ch)
+            self._next_ch()
         elif self.ch == '+':
             token.kind = Token.Kind.add
             self._next_ch()
@@ -47,8 +51,9 @@ class Scanner:
         elif self.ch == ')':
             token.kind = Token.Kind.rpar
             self._next_ch()
-        elif self.ch == 'eol':
+        elif self.ch == '\n':
             token.kind = Token.Kind.eol
+            self._next_ch()
 
         return token
 
@@ -57,41 +62,26 @@ class Scanner:
             self.pos += 1
             self.ch = self.data[self.pos]
         except IndexError:
-            self.ch = "eol"
-            self.pos = 0
-
-    def _read_number(self, token: Token):
-        num = ""
-        while '0' <= self.ch <= '9':
-            num += self.ch
-            self._next_ch()
-        token.kind = Token.Kind.number
-        token.val = int(num)
+            self.ch = '\n'
 
 
 class Parser:
-    data: list
     scanner: Scanner
-    t: Token = Token()
-    la: Token = Token()
-    sym: Token.Kind = Token.Kind.none
-    pos: int = 0
-    results: list = []
+    t: Token
+    la: Token
+    sym: Token.Kind
+    results: list
 
     def __init__(self, data):
-        self.data = data
-        self.scanner = Scanner(data[self.pos])
+        self.scanner = Scanner(data)
+        self.t = Token()
+        self.la = Token()
+        self.sym = Token.Kind.none
+        self.results = []
+        self._scan()
 
     def parse(self):
-        self._scan()
-        self.results.append(self._expr())
-        self._check(Token.Kind.eol)
-
-        self.pos += 1
-        try:
-            self.scanner = Scanner(self.data[self.pos])
-        except IndexError:
-            print("Parsing finished!")
+        raise NotImplementedError()
 
     def sum_results(self):
         return sum(self.results)
@@ -106,6 +96,12 @@ class Parser:
             self._scan()
         else:
             raise RuntimeError()
+
+
+class LRParser(Parser):
+    def parse(self):
+        self.results.append(self._expr())
+        self._check(Token.Kind.eol)
 
     def _expr(self):
         left_elem = self._elem()
@@ -139,23 +135,60 @@ class Parser:
             return self.t.kind
 
 
-def part_a(data: list):
-    parser = Parser(data)
-    for _ in range(len(data)):
+class PunstriParser(Parser):
+    def parse(self):
+        self.results.append(self._expr())
+        self._check(Token.Kind.eol)
+
+    def _expr(self):
+        left_factor = self._factor()
+        while self.sym == Token.Kind.mul:
+            self._scan()
+            right_factor = self._factor()
+            left_factor *= right_factor
+        return left_factor
+
+    def _factor(self):
+        left_term = self._term()
+        while self.sym == Token.Kind.add:
+            self._scan()
+            right_term = self._term()
+            left_term += right_term
+        return left_term
+
+    def _term(self):
+        if self.sym == Token.Kind.number:
+            self._scan()
+            term = self.t.val
+        elif self.sym == Token.Kind.lpar:
+            self._scan()
+            term = self._expr()
+            self._check(Token.Kind.rpar)
+        else:
+            raise RuntimeError()
+        return term
+
+
+def part_a(data: str):
+    parser = LRParser(data)
+    for i in range(len(data.split('\n'))):
         parser.parse()
     return parser.sum_results()
 
 
-def part_b():
-    return None
+def part_b(data: str):
+    parser = PunstriParser(data)
+    for i in range(len(data.split('\n'))):
+        parser.parse()
+    return parser.sum_results()
 
 
 def load():
-    return problem.data()
+    return problem.raw_data()
 
 
 if __name__ == '__main__':
     problem = Problem(18)
 
     problem.submit(part_a(load()), 'a')  # 8929569623593
-    # problem.submit(part_b(), 'b')
+    problem.submit(part_b(load()), 'b')  # 231235959382961
