@@ -93,7 +93,7 @@ class Parser:
         if self.sym == expected:
             self._scan()
         else:
-            raise RuntimeError()
+            raise RuntimeError("Unexpected token")
 
 
 class LRParser(Parser):
@@ -121,7 +121,7 @@ class LRParser(Parser):
             elem = self._expr()
             self._check(Token.Kind.rpar)
         else:
-            raise RuntimeError()
+            raise RuntimeError("Elem must be called with number or lpar token")
         return elem
 
     def _op(self):
@@ -163,7 +163,7 @@ class PunstriParser(Parser):
             term = self._expr()
             self._check(Token.Kind.rpar)
         else:
-            raise RuntimeError()
+            raise RuntimeError("Term must be called with number or lpar token")
         return term
 
 
