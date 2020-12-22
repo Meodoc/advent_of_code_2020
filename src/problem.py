@@ -31,7 +31,8 @@ class Problem:
                     fh.write(str(answer))
 
     # -- Helpers --
-    def _raw_test_input(self):
+    @staticmethod
+    def _raw_test_input():
         with open('test.in', 'r') as fh:
             return "".join(fh.readlines())
 
