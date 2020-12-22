@@ -81,9 +81,6 @@ class Parser:
     def parse(self):
         raise NotImplementedError()
 
-    def sum_results(self):
-        return sum(self.results)
-
     def _scan(self):
         self.t = self.la
         self.la = self.scanner.next()
@@ -171,14 +168,14 @@ def part_a(data: str):
     parser = LRParser(data)
     for _ in range(len(data.split('\n'))):
         parser.parse()
-    return parser.sum_results()
+    return sum(parser.results)
 
 
 def part_b(data: str):
     parser = PunstriParser(data)
     for _ in range(len(data.split('\n'))):
         parser.parse()
-    return parser.sum_results()
+    return sum(parser.results)
 
 
 def load():
