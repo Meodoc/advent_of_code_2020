@@ -5,7 +5,7 @@ class Cardinal(IntEnum):
     NORTH = 0,
     EAST = 90,
     SOUTH = 180,
-    WEST = 270,
+    WEST = 270
 
 
 class Direction(Enum):
