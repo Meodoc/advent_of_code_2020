@@ -178,12 +178,12 @@ def part_b(data: str):
     return sum(parser.results)
 
 
-def load():
-    return problem.raw_data()
+def load(p: Problem):
+    return p.raw_data()
 
 
 if __name__ == '__main__':
     problem = Problem(18)
 
-    problem.submit(part_a(load()), 'a')  # 8929569623593
-    problem.submit(part_b(load()), 'b')  # 231235959382961
+    problem.submit(part_a(load(problem)), 'a')  # 8929569623593
+    problem.submit(part_b(load(problem)), 'b')  # 231235959382961
