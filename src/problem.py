@@ -11,11 +11,11 @@ class Problem:
             with open(f'../../data/day{day}/input.in', 'w') as fh:
                 fh.writelines(self._data)
 
-    def raw_data(self) -> str:
-        return self._data
-
     def data(self, delim='\n', dtype=str) -> list:
         return [dtype(line) for line in self._data.split(delim)]
+
+    def raw_data(self) -> str:
+        return self._data
 
     def test_data(self, delim='\n', dtype=str) -> list:
         return [dtype(line) for line in self._raw_test_input().split(delim)]
