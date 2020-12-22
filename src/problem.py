@@ -25,10 +25,7 @@ class Problem:
 
         if store_answer:
             with open(f'../../data/day{self._day}/{part}.out', 'w') as fh:
-                if isinstance(answer, list):
-                    fh.writelines('\n'.join(str(answer)))
-                else:
-                    fh.write(str(answer))
+                fh.write(str(answer))
 
     # -- Helpers --
     @staticmethod
