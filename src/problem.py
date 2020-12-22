@@ -11,16 +11,16 @@ class Problem:
             with open(f'../../data/day{day}/input.in', 'w') as fh:
                 fh.writelines(self._data)
 
-    def raw_data(self):
+    def raw_data(self) -> str:
         return self._data
 
-    def data(self, delim='\n', dtype=str):
+    def data(self, delim='\n', dtype=str) -> list:
         return [dtype(line) for line in self._data.split(delim)]
 
-    def test_data(self, delim='\n', dtype=str):
+    def test_data(self, delim='\n', dtype=str) -> list:
         return [dtype(line) for line in self._raw_test_input().split(delim)]
 
-    def submit(self, answer, part: str, store_answer=True):
+    def submit(self, answer, part: str, store_answer=True) -> None:
         submit(answer, part=part, day=self._day)
 
         if store_answer:
@@ -32,7 +32,7 @@ class Problem:
 
     # -- Helpers --
     @staticmethod
-    def _raw_test_input():
+    def _raw_test_input() -> str:
         with open('test.in', 'r') as fh:
             return "".join(fh.readlines())
 
