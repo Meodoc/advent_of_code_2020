@@ -5,14 +5,13 @@ from enum import Enum
 
 class Token:
     class Kind(Enum):
-        number = "number",
-        add = "+",
-        mul = "*",
-        lpar = "(",
-        rpar = ")",
-        eol = "eol",
-        eof = "eof",
-        none = "none"
+        number = 'number',
+        add = '+',
+        mul = '*',
+        lpar = '(',
+        rpar = ')',
+        eol = 'eol',
+        none = 'none'
 
     kind: Kind = Kind.none
     val: int = 0
