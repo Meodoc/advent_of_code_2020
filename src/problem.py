@@ -20,6 +20,9 @@ class Problem:
     def test_data(self, delim='\n', dtype=str) -> list:
         return [dtype(line) for line in self._raw_test_input().split(delim)]
 
+    def raw_test_data(self) -> str:
+        return self._raw_test_input()
+
     def submit(self, answer, part: str, store_answer=True) -> None:
         submit(answer, part=part, day=self._day)
 
