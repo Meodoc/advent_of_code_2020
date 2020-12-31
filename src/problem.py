@@ -8,7 +8,7 @@ class Problem:
 
         if store_input:
             print()
-            with open(f'../../data/day{day}/input.in', 'w') as fh:
+            with open(f'../../data/{day}/input.in', 'w') as fh:
                 fh.writelines(self._data)
 
     def data(self, delim='\n', dtype=str) -> list:
@@ -27,7 +27,7 @@ class Problem:
         submit(answer, part=part, day=self._day)
 
         if store_answer:
-            with open(f'../../data/day{self._day}/{part}.out', 'w') as fh:
+            with open(f'../../data/{self._day}/{part}.out', 'w') as fh:
                 fh.write(str(answer))
 
     # -- Helpers --
