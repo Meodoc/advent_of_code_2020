@@ -45,6 +45,5 @@ if __name__ == '__main__':
     data = load()
     bus_data = list(filter(lambda b: b != 'x', data))
 
-    part_b_carina()
     # problem.submit(part_a(), 'a')  # 8063
     # problem.submit(part_b(), 'b')  # 775230782877242
