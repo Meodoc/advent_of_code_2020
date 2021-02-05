@@ -36,17 +36,6 @@ def min_num_in_mod(x, m):
     return x - floor(x / m) * m
 
 
-def part_b_carina():
-    busplan = list(map(lambda b: 1 if b == 'x' else b, data[1:]))
-    time = 0
-    step = 1
-    for index, bus in enumerate(busplan):
-        while (time + index) % bus:
-            time += step
-        step *= bus
-    print(time)
-
-
 def load():
     return [int(problem.data()[0])] + [int(b) if b != 'x' else b for b in problem.data()[1].split(',')]
 

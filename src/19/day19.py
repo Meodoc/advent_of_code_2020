@@ -13,7 +13,7 @@ def part_a(data: dict):
 def part_b(data: dict):
     valid = 0
     for msg in data["messages"]:
-        for n_8, n_11 in product(range(10), repeat=2):
+        for n_8, n_11 in product(range(10), repeat=2):  # Try different recursion instances for rule 8 and 11
             patch_rules(data, n_8, n_11)
             if parse(data["rules"], msg):
                 valid += 1
@@ -42,7 +42,7 @@ def parse(rules: dict, msg: str):
         return False, 0
 
     s, read = _parse(0, msg)
-    return s if read == len(msg) else False
+    return s and read == len(msg)
 
 
 def patch_rules(data: dict, n_8: int, n_11: int):
@@ -63,5 +63,8 @@ def load(p: Problem):
 if __name__ == '__main__':
     problem = Problem(19)
 
-    problem.submit(part_a(load(problem)), 'a')  # 156
-    problem.submit(part_b(load(problem)), 'b')  # 363
+    print(part_a(load(problem)))
+    print(part_b(load(problem)))
+
+    #problem.submit(part_a(load(problem)), 'a')  # 156
+    #problem.submit(part_b(load(problem)), 'b')  # 363
