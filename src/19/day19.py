@@ -17,6 +17,7 @@ def part_b(data: dict):
             patch_rules(data, n_8, n_11)
             if parse(data["rules"], msg):
                 valid += 1
+                break
     return valid
 
 
