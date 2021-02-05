@@ -1,6 +1,7 @@
 from src.problem import Problem
 
 import re
+from itertools import product
 
 RULE_PATTERN = re.compile(r'^(\d+): (?:([\d ]+)(?: \| ([\d ]+))?|\"([ab]+)\")$')
 
@@ -10,15 +11,22 @@ def part_a(data: dict):
 
 
 def part_b(data: dict):
-    data["rules"][8] = [[42], [42, 8]]
-    data["rules"][11] = [[42, 31], [42, 11, 31]]
-    return sum(parse_b(data["rules"], msg) for msg in data["messages"])
+    valid = 0
+    for msg in data["messages"]:
+        for n_8, n_11 in product(range(10), repeat=2):
+            patch_rules(data, n_8, n_11)
+            if parse(data["rules"], msg):
+                valid += 1
+    return valid
 
 
 def parse(rules: dict, msg: str):
     def _parse(rule: int, tokens: str):
         if rules[rule] in ['a', 'b']:
-            return tokens[0] == rules[rule], 1
+            try:
+                return tokens[0] == rules[rule], 1
+            except IndexError:
+                return False, 1
 
         for opt in rules[rule]:
             accept = False
@@ -35,30 +43,14 @@ def parse(rules: dict, msg: str):
     s, read = _parse(0, msg)
     return s if read == len(msg) else False
 
-def parse_b(rules: dict, msg: str):
-    def _parse(rule: int, tokens: str):
-        if rules[rule] in ['a', 'b']:
-            return tokens[0] == rules[rule], 1
 
-        for opt in rules[rule]:
-            accept = False
-            pos = 0
-            for subrule in opt:
-                accept, r = _parse(subrule, tokens[pos:])
-                pos += r
-                if not accept:
-                    break
-            if accept:
-                return True, pos
-        return False, 0
-
-    s, read = _parse(0, msg)
-    print(s, msg)
-    return s if read == len(msg) else False
+def patch_rules(data: dict, n_8: int, n_11: int):
+    data["rules"][8] = [[42] + [42] * n_8]
+    data["rules"][11] = [[42] + [42] * n_11 + [31] * n_11 + [31]]
 
 
 def load(p: Problem):
-    data = p.raw_test_data().split('\n\n')
+    data = p.raw_data().split('\n\n')
     rules = {}
     for line in data[0].split('\n'):
         match = RULE_PATTERN.match(line)
@@ -70,8 +62,5 @@ def load(p: Problem):
 if __name__ == '__main__':
     problem = Problem(19)
 
-    #print(part_a(load(problem)))
-    print(part_b(load(problem)))
-
-    # problem.submit(part_a(load(problem)), 'a')  # 156
-    # problem.submit(part_b(load()), 'b')
+    problem.submit(part_a(load(problem)), 'a')  # 156
+    problem.submit(part_b(load(problem)), 'b')  # 363
