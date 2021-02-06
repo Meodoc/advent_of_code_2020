@@ -91,7 +91,7 @@ class Image:
             data_row = None
             while curr:
                 if curr.has_free_edge() and curr not in self.edge_tiles:
-                    print(str(curr.id) + " yikes")
+                    raise RuntimeError("Incorrect tile assembly: inner image tiles contain empty links")
                 tile_row = np.append(tile_row, curr)
                 data_row = np.block([data_row, curr.data]) if data_row is not None else curr.data
                 curr = curr.right
