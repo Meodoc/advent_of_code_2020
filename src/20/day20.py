@@ -1,17 +1,10 @@
-from dataclasses import dataclass
-from tqdm import tqdm
 from src.problem import Problem
 
-import numpy as np
+from dataclasses import dataclass
+from tqdm import tqdm
 from enum import Enum
 
-
-class Dir(Enum):
-    LEFT = 0,
-    RIGHT = 1,
-    UP = 3,
-    DOWN = 4,
-    NONE = 5
+import numpy as np
 
 
 class Axis(Enum):
@@ -25,13 +18,8 @@ class Tile:
     data: np.ndarray
     left, right, up, down = None, None, None, None
 
-    def rotate(self, direction: Dir):
-        if direction == Dir.LEFT:
-            self.data = np.rot90(self.data)
-        elif direction == Dir.RIGHT:
-            self.data = np.rot90(self.data, k=3)
-        else:
-            raise ValueError()
+    def rotate_left(self):
+        self.data = np.rot90(self.data)
 
     def flip(self, axis: Axis):
         if axis == Axis.HORIZONTAL:
@@ -66,7 +54,8 @@ class Tile:
 class Image:
     head: Tile
     edge_tiles: set[Tile]
-    tiles: list[list[Tile]]
+    tiles: np.ndarray
+    data: np.ndarray
 
     def construct(self, tiles: list[Tile]):
         self.head = tiles[0]
@@ -78,7 +67,7 @@ class Image:
                     tiles.remove(tile)
                     progress.update()
                     break
-        self.tiles = self.arrayify()
+        self.tiles, self.data = self.arrayify()
 
     def match(self, tile: Tile):
         for edge_tile in self.edge_tiles.copy():
@@ -90,20 +79,26 @@ class Image:
 
     def arrayify(self):
         curr = self.head
-        while curr.left:
+        while curr.left:  # find top left item
             curr = curr.left
         while curr.up:
             curr = curr.up
-        image = []
-        while curr:
+        tiled_image = None
+        data = None
+        while curr:  # traverse linked tiles and create tile and data arrays
             left = curr
-            line = []
+            tile_row = np.array([])
+            data_row = None
             while curr:
-                line.append(curr)
+                if curr.has_free_edge() and curr not in self.edge_tiles:
+                    print(str(curr.id) + " yikes")
+                tile_row = np.append(tile_row, curr)
+                data_row = np.block([data_row, curr.data]) if data_row is not None else curr.data
                 curr = curr.right
-            image.append(line)
+            tiled_image = np.block([[tiled_image], [tile_row]]) if tiled_image is not None else tile_row
+            data = np.block([[data], [data_row]]) if data is not None else data_row
             curr = left.down
-        return image
+        return tiled_image, data
 
     @staticmethod
     def try_match(edge_tile: Tile, tile: Tile):
@@ -126,7 +121,7 @@ class Image:
                         edge_tile.down = tile
                         tile.up = edge_tile
                         return True
-                    tile.rotate(Dir.LEFT)
+                    tile.rotate_left()
                 tile.flip(Axis.HORIZONTAL)
             tile.flip(Axis.VERTICAL)
         return False
@@ -144,14 +139,14 @@ def part_b(data: list):
 
 def load(p: Problem):
     return [Tile(int(tile.split('\n')[0].split(' ')[1][:-1]), np.array([np.array(list(l)) for l in tile.split('\n')[1:]]))
-            for tile in p.raw_data().split('\n\n')]
+            for tile in p.raw_test_data().split('\n\n')]
 
 
 if __name__ == '__main__':
     problem = Problem(20)
 
-    # print(part_a(load(problem)))
+    print(part_a(load(problem)))
     # print(part_b(load(problem)))
 
-    problem.submit(part_a(load(problem)), 'a')  # 17032646100079
+    # problem.submit(part_a(load(problem)), 'a')  # 17032646100079
     # problem.submit(part_b(load(problem)), 'b')
