@@ -79,7 +79,7 @@ class Image:
 
     def match(self, tile: Tile):
         for edge_tile in self.edge_tiles.copy():
-            if self.try_match(edge_tile, tile):
+            if self.try_match(edge_tile, tile):  # try to match the tile with every edge
                 self.edge_tiles.add(tile)
                 if not edge_tile.has_free_edge():
                     self.edge_tiles.remove(edge_tile)
@@ -104,9 +104,9 @@ class Image:
 
     @staticmethod
     def try_match(edge_tile: Tile, tile: Tile):
-        for _ in range(2):
-            for _ in range(2):
-                for _ in range(4):
+        for _ in range(2):  # vertical flips
+            for _ in range(2):  # horizontal flips
+                for _ in range(4):  # rotations
                     if edge_tile.left_edge() is not None and np.array_equal(edge_tile.left_edge(), tile.right_edge()):
                         edge_tile.left = tile
                         tile.right = edge_tile
@@ -147,8 +147,8 @@ def load(p: Problem):
 if __name__ == '__main__':
     problem = Problem(20)
 
-    print(part_a(load(problem)))
+    # print(part_a(load(problem)))
     # print(part_b(load(problem)))
 
-    # problem.submit(part_a(load(problem)), 'a')  # 17032646100079
+    problem.submit(part_a(load(problem)), 'a')  # 17032646100079
     # problem.submit(part_b(load(problem)), 'b')
