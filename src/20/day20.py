@@ -59,34 +59,34 @@ class Tile:
     def bottom_edge(self):
         return self.data[-1, :] if not self.down else None
 
+    def __hash__(self):
+        return hash(self.id)
+
 
 class Image:
     def __init__(self, head: Tile):
         self.head = head
-        self.edge_tiles = [head]
+        self.edge_tiles = {head}
+        self.tiles = []
 
-    def match_backup(self, tile: Tile):
-        for edge_tile in self.edge_tiles:
-            if self.try_match(edge_tile, tile):
-                self.edge_tiles.append(tile)
-                if not edge_tile.has_free_edge():
-                    self.edge_tiles.remove(edge_tile)
-                return True
-        return False
+    def construct(self, tiles: list):
+        while len(tiles) > 0:
+            for tile in tiles:
+                if self.match(tile):
+                    tiles.remove(tile)
+                    break
+        self.tiles = self.arrayify()
 
     def match(self, tile: Tile):
-        for edge_tile in self.edge_tiles:
+        for edge_tile in self.edge_tiles.copy():
             if self.try_match(edge_tile, tile):
-                self.edge_tiles.append(tile)
+                self.edge_tiles.add(tile)
                 if not edge_tile.has_free_edge():
                     self.edge_tiles.remove(edge_tile)
-
-        if tile.is_connected():
-            return True
-        return False
+        return tile.is_connected()
 
     def arrayify(self):
-        curr = self.edge_tiles[0]
+        curr = self.head
         while curr.left:
             curr = curr.left
         while curr.up:
@@ -104,66 +104,35 @@ class Image:
 
     @staticmethod
     def try_match(edge_tile: Tile, tile: Tile):
-        if edge_tile.left_edge() is not None:
+        for _ in range(2):
             for _ in range(2):
-                for _ in range(2):
-                    for _ in range(4):
-                        if np.array_equal(edge_tile.left_edge(), tile.right_edge()):
-                            edge_tile.left = tile
-                            tile.right = edge_tile
-                            return True
-                        tile.rotate(Dir.LEFT)
-                    tile.flip(Axis.HORIZONTAL)
-                tile.flip(Axis.VERTICAL)
-
-        if edge_tile.right_edge() is not None:
-            for _ in range(2):
-                for _ in range(2):
-                    for _ in range(4):
-                        if np.array_equal(edge_tile.right_edge(), tile.left_edge()):
-                            edge_tile.right = tile
-                            tile.left = edge_tile
-                            return True
-                        tile.rotate(Dir.LEFT)
-                    tile.flip(Axis.HORIZONTAL)
-                tile.flip(Axis.VERTICAL)
-
-        if edge_tile.top_edge() is not None:
-            for _ in range(2):
-                for _ in range(2):
-                    for _ in range(4):
-                        if np.array_equal(edge_tile.top_edge(), tile.bottom_edge()):
-                            edge_tile.up = tile
-                            tile.down = edge_tile
-                            return True
-                        tile.rotate(Dir.LEFT)
-                    tile.flip(Axis.HORIZONTAL)
-                tile.flip(Axis.VERTICAL)
-
-        if edge_tile.bottom_edge() is not None:
-            for _ in range(2):
-                for _ in range(2):
-                    for _ in range(4):
-                        if np.array_equal(edge_tile.bottom_edge(), tile.top_edge()):
-                            edge_tile.down = tile
-                            tile.up = edge_tile
-                            return True
-                        tile.rotate(Dir.LEFT)
-                    tile.flip(Axis.HORIZONTAL)
-                tile.flip(Axis.VERTICAL)
+                for _ in range(4):
+                    if edge_tile.left_edge() is not None and np.array_equal(edge_tile.left_edge(), tile.right_edge()):
+                        edge_tile.left = tile
+                        tile.right = edge_tile
+                        return True
+                    if edge_tile.right_edge() is not None and np.array_equal(edge_tile.right_edge(), tile.left_edge()):
+                        edge_tile.right = tile
+                        tile.left = edge_tile
+                        return True
+                    if edge_tile.top_edge() is not None and np.array_equal(edge_tile.top_edge(), tile.bottom_edge()):
+                        edge_tile.up = tile
+                        tile.down = edge_tile
+                        return True
+                    if edge_tile.bottom_edge() is not None and np.array_equal(edge_tile.bottom_edge(), tile.top_edge()):
+                        edge_tile.down = tile
+                        tile.up = edge_tile
+                        return True
+                    tile.rotate(Dir.LEFT)
+                tile.flip(Axis.HORIZONTAL)
+            tile.flip(Axis.VERTICAL)
         return False
 
 
 def part_a(data: list):
     image = Image(data[0])
-    data.remove(data[0])
-    while len(data) > 0:
-        for tile in data:
-            if image.match(tile):
-                data.remove(tile)
-                break
-    image_data = image.arrayify()
-    return image_data[0][0].id * image_data[0][-1].id * image_data[-1][0].id * image_data[-1][-1].id
+    image.construct(data[1:])
+    return image.tiles[0][0].id * image.tiles[0][-1].id * image.tiles[-1][0].id * image.tiles[-1][-1].id
 
 
 def part_b(data: list):
@@ -181,5 +150,5 @@ if __name__ == '__main__':
     print(part_a(load(problem)))
     # print(part_b(load(problem)))
 
-    # problem.submit(part_a(load(problem)), 'a')
+    # problem.submit(part_a(load(problem)), 'a')  # 17032646100079
     # problem.submit(part_b(load(problem)), 'b')
