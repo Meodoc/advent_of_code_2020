@@ -142,7 +142,7 @@ def part_b(data: list):
 
 def load(p: Problem):
     return [Tile(int(tile.split('\n')[0].split(' ')[1][:-1]), np.array([np.array(list(l)) for l in tile.split('\n')[1:]]))
-            for tile in p.raw_test_data().split('\n\n')]
+            for tile in p.raw_data().split('\n\n')]
 
 
 if __name__ == '__main__':
