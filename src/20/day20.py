@@ -64,12 +64,13 @@ class Tile:
 
 
 class Image:
-    def __init__(self, head: Tile):
-        self.head = head
-        self.edge_tiles = {head}
-        self.tiles = []
+    head: Tile
+    edge_tiles: set[Tile]
+    tiles: list[list[Tile]]
 
     def construct(self, tiles: list):
+        self.head = tiles[0]
+        self.edge_tiles = {self.head}
         while len(tiles) > 0:
             for tile in tiles:
                 if self.match(tile):
@@ -130,8 +131,8 @@ class Image:
 
 
 def part_a(data: list):
-    image = Image(data[0])
-    image.construct(data[1:])
+    image = Image()
+    image.construct(data)
     return image.tiles[0][0].id * image.tiles[0][-1].id * image.tiles[-1][0].id * image.tiles[-1][-1].id
 
 
@@ -141,7 +142,7 @@ def part_b(data: list):
 
 def load(p: Problem):
     return [Tile(int(tile.split('\n')[0].split(' ')[1][:-1]), np.array([np.array(list(l)) for l in tile.split('\n')[1:]]))
-            for tile in p.raw_data().split('\n\n')]
+            for tile in p.raw_test_data().split('\n\n')]
 
 
 if __name__ == '__main__':
