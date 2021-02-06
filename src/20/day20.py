@@ -60,13 +60,13 @@ class Image:
     def construct(self, tiles: list[Tile]):
         self.head = tiles[0]
         self.edge_tiles = {self.head}
+        tiles.remove(self.head)
         progress = tqdm(total=len(tiles), desc="Image construction")
         while len(tiles) > 0:
             for tile in tiles:
                 if self.match(tile):
                     tiles.remove(tile)
                     progress.update()
-                    break
         self.tiles, self.data = self.arrayify()
 
     def match(self, tile: Tile):
@@ -130,7 +130,7 @@ class Image:
 def part_a(data: list):
     image = Image()
     image.construct(data)
-    return image.tiles[0][0].id * image.tiles[0][-1].id * image.tiles[-1][0].id * image.tiles[-1][-1].id
+    return image.tiles[0, 0].id * image.tiles[0, -1].id * image.tiles[-1, 0].id * image.tiles[-1, -1].id
 
 
 def part_b(data: list):
@@ -139,7 +139,7 @@ def part_b(data: list):
 
 def load(p: Problem):
     return [Tile(int(tile.split('\n')[0].split(' ')[1][:-1]), np.array([np.array(list(l)) for l in tile.split('\n')[1:]]))
-            for tile in p.raw_test_data().split('\n\n')]
+            for tile in p.raw_data().split('\n\n')]
 
 
 if __name__ == '__main__':
