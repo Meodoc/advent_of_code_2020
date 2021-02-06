@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+from tqdm import tqdm
 from src.problem import Problem
 
 import numpy as np
@@ -68,13 +68,15 @@ class Image:
     edge_tiles: set[Tile]
     tiles: list[list[Tile]]
 
-    def construct(self, tiles: list):
+    def construct(self, tiles: list[Tile]):
         self.head = tiles[0]
         self.edge_tiles = {self.head}
+        progress = tqdm(total=len(tiles), desc="Image construction")
         while len(tiles) > 0:
             for tile in tiles:
                 if self.match(tile):
                     tiles.remove(tile)
+                    progress.update()
                     break
         self.tiles = self.arrayify()
 
