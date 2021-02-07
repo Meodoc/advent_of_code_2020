@@ -52,12 +52,12 @@ class Image:
         progress = tqdm(total=len(tiles), desc="Image construction")
         while len(tiles) > 0:
             for tile in tiles:
-                if self.match(tile):
+                if self._match(tile):
                     tiles.remove(tile)
                     progress.update()
-        self.tiles, self.data = self.arrayify()
+        self.tiles, self.data = self._arrayify()
 
-    def match(self, tile: Tile):
+    def _match(self, tile: Tile):
         for edge_tile in self.edge_tiles.copy():
             if self.try_match(edge_tile, tile):  # try to match the tile with every edge
                 self.edge_tiles.add(tile)
@@ -65,7 +65,7 @@ class Image:
                     self.edge_tiles.remove(edge_tile)
         return tile.is_connected()
 
-    def arrayify(self):
+    def _arrayify(self):
         curr = self.head
         while curr.left:  # find top left item
             curr = curr.left
