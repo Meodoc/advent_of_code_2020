@@ -26,8 +26,6 @@ class Tile:
             self.data = np.flipud(self.data)
         elif axis == Axis.VERTICAL:
             self.data = np.fliplr(self.data)
-        else:
-            raise ValueError()
 
     def is_connected(self):
         return self.left or self.right or self.up or self.down
@@ -71,8 +69,7 @@ class Image:
     def match(self, tile: Tile):
         for edge_tile in self.edge_tiles.copy():
             if self.try_match(edge_tile, tile):  # try to match the tile with every edge
-                self.edge_tiles.add(tile)  # TODO: why does this only work when this loc is exactly here
-                # TODO: when tile has matched with particular rotation, it should match with all the others whithout having to be rotated
+                self.edge_tiles.add(tile)
                 if not edge_tile.has_free_edge():
                     self.edge_tiles.remove(edge_tile)
         return tile.is_connected()
@@ -101,47 +98,36 @@ class Image:
         return tiled_image, data
 
     def find_monsters(self):
-        def _find_tail(d: np.ndarray, l: int, start: int):
-            for i in range(start, len(d) - 1):
-                if d[l+1, i] == '#' and d[l+2, i+1] == '#':
-                    return [(l+1, i), (l+2, i+1)], i+2
-            return None, len(d)
+        def _match_tail(d: np.ndarray, r: int, c: int):
+            if d[r + 1, c] == '#' and d[r + 2, c + 1] == '#':
+                return [(r + 1, c), (r + 2, c + 1)]
 
-        def _find_body(d: np.ndarray, l: int, start: int):
-            for i in range(start, len(d) - 3):
-                if d[l+2, i] == '#' and d[l+1, i+1] == '#' and d[l+1, i+2] == '#' and d[l+2, i+3] == '#':
-                    return [(l+2, i), (l+1, i+1), (l+1, i+2), (l+2, i+3)], i+4
-            return None, len(d)
+        def _match_body(d: np.ndarray, r: int, c: int):
+            if d[r + 2, c] == '#' and d[r + 1, c + 1] == '#' and d[r + 1, c + 2] == '#' and d[r + 2, c + 3] == '#':
+                return [(r + 2, c), (r + 1, c + 1), (r + 1, c + 2), (r + 2, c + 3)]
 
-        def _find_head(d: np.ndarray, l: int, start: int):
-            for i in range(start, len(d) - 3):
-                if d[l+2, i] == '#' and d[l+1, i+1] == '#' and d[l+1, i+2] == '#' and d[l, i+2] == '#' and d[l+1, i+3] == '#':
-                    return [(l+2, i), (l+1, i+1), (l+1, i+2), (l, i+2), (l+1, i+3)]
-            return None
+        def _match_head(d: np.ndarray, r: int, c: int):
+            if d[r + 2, c] == '#' and d[r + 1, c + 1] == '#' and d[r + 1, c + 2] == '#' and d[r, c + 2] == '#' and \
+                    d[r + 1, c + 3] == '#':
+                return [(r + 2, c), (r + 1, c + 1), (r + 1, c + 2), (r, c + 2), (r + 1, c + 3)]
 
-        max_monster_count = 0
-        max_monsters = None
         for _ in range(2):  # vertical flips
             for _ in range(2):  # horizontal flips
                 for _ in range(4):  # rotations
-                    monsters = 0
-                    data = self.data.copy()
-                    for l in range(len(self.data) - 2):
-                        tail, i = _find_tail(data, l, 0)
-                        body1, i = _find_body(data, l, i)
-                        body2, i = _find_body(data, l, i)
-                        head = _find_head(data, l, i)
-                        if head is not None:
-                            for c in tail + body1 + body2 + head:
-                                data[c[0], c[1]] = '0'
-                                monsters += 1
-                    if monsters > max_monster_count:
-                        max_monster_count = monsters
-                        max_monsters = data
+                    found = False
+                    for r in range(len(self.data) - 2):
+                        for c in range(len(self.data) - 19):
+                            tail, body1, body2, head = _match_tail(self.data, r, c), _match_body(self.data, r, c+4), \
+                                                       _match_body(self.data, r, c+10), _match_head(self.data, r, c+16)
+                            if tail and body1 and body2 and head:
+                                for i in tail + body1 + body2 + head:
+                                    self.data[i] = '0'
+                                found = True
+                    if found:
+                        return self.data
                     self.data = np.rot90(self.data)
                 self.data = np.flipud(self.data)
             self.data = np.fliplr(self.data)
-        return max_monsters
 
     @staticmethod
     def try_match(edge_tile: Tile, tile: Tile):
@@ -179,20 +165,21 @@ def part_a(data: list):
 def part_b(data: list):
     image = Image()
     image.construct(data)
-    data = image.find_monsters()
-    return np.count_nonzero(data == '#')
+    image.find_monsters()
+    return np.count_nonzero(image.data == '#')
 
 
 def load(p: Problem):
-    return [Tile(int(tile.split('\n')[0].split(' ')[1][:-1]), np.array([np.array(list(l)) for l in tile.split('\n')[1:]]))
-            for tile in p.raw_data().split('\n\n')]
+    return [
+        Tile(int(tile.split('\n')[0].split(' ')[1][:-1]), np.array([np.array(list(l)) for l in tile.split('\n')[1:]]))
+        for tile in p.raw_data().split('\n\n')]
 
 
 if __name__ == '__main__':
     problem = Problem(20)
 
-    #print(part_a(load(problem)))
-    print(part_b(load(problem)))
+    # print(part_a(load(problem)))
+    # print(part_b(load(problem)))
 
     # problem.submit(part_a(load(problem)), 'a')  # 17032646100079
-    # problem.submit(part_b(load(problem)), 'b')  # 2111 too high
+    # problem.submit(part_b(load(problem)), 'b')  # 2006
