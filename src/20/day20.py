@@ -2,14 +2,8 @@ from src.problem import Problem
 
 from dataclasses import dataclass
 from tqdm import tqdm
-from enum import Enum
 
 import numpy as np
-
-
-class Axis(Enum):
-    HORIZONTAL = 0,
-    VERTICAL = 1
 
 
 @dataclass
@@ -21,11 +15,8 @@ class Tile:
     def rotate_left(self):
         self.data = np.rot90(self.data)
 
-    def flip(self, axis: Axis):
-        if axis == Axis.HORIZONTAL:
-            self.data = np.flipud(self.data)
-        elif axis == Axis.VERTICAL:
-            self.data = np.fliplr(self.data)
+    def flip(self):
+        self.data = np.fliplr(self.data)
 
     def is_connected(self):
         return self.left or self.right or self.up or self.down
@@ -111,48 +102,44 @@ class Image:
                     d[r + 1, c + 3] == '#':
                 return [(r + 2, c), (r + 1, c + 1), (r + 1, c + 2), (r, c + 2), (r + 1, c + 3)]
 
-        for _ in range(2):  # vertical flips
-            for _ in range(2):  # horizontal flips
-                for _ in range(4):  # rotations
-                    found = False
-                    for r in range(len(self.data) - 2):
-                        for c in range(len(self.data) - 19):
-                            tail, body1, body2, head = _match_tail(self.data, r, c), _match_body(self.data, r, c+4), \
-                                                       _match_body(self.data, r, c+10), _match_head(self.data, r, c+16)
-                            if tail and body1 and body2 and head:
-                                for i in tail + body1 + body2 + head:
-                                    self.data[i] = '0'
-                                found = True
-                    if found:
-                        return self.data
-                    self.data = np.rot90(self.data)
-                self.data = np.flipud(self.data)
+        for _ in range(2):  # flips
+            for _ in range(4):  # rotations
+                found = False
+                for r in range(len(self.data) - 2):
+                    for c in range(len(self.data) - 19):
+                        tail, body1, body2, head = _match_tail(self.data, r, c), _match_body(self.data, r, c+4), \
+                                                   _match_body(self.data, r, c+10), _match_head(self.data, r, c+16)
+                        if tail and body1 and body2 and head:
+                            for i in tail + body1 + body2 + head:
+                                self.data[i] = '0'
+                            found = True
+                if found:
+                    return self.data
+                self.data = np.rot90(self.data)
             self.data = np.fliplr(self.data)
 
     @staticmethod
     def try_match(edge_tile: Tile, tile: Tile):
-        for _ in range(2):  # vertical flips
-            for _ in range(2):  # horizontal flips
-                for _ in range(4):  # rotations
-                    if edge_tile.left_edge() is not None and np.array_equal(edge_tile.left_edge(), tile.right_edge()):
-                        edge_tile.left = tile
-                        tile.right = edge_tile
-                        return True
-                    if edge_tile.right_edge() is not None and np.array_equal(edge_tile.right_edge(), tile.left_edge()):
-                        edge_tile.right = tile
-                        tile.left = edge_tile
-                        return True
-                    if edge_tile.top_edge() is not None and np.array_equal(edge_tile.top_edge(), tile.bottom_edge()):
-                        edge_tile.up = tile
-                        tile.down = edge_tile
-                        return True
-                    if edge_tile.bottom_edge() is not None and np.array_equal(edge_tile.bottom_edge(), tile.top_edge()):
-                        edge_tile.down = tile
-                        tile.up = edge_tile
-                        return True
-                    tile.rotate_left()
-                tile.flip(Axis.HORIZONTAL)
-            tile.flip(Axis.VERTICAL)
+        for _ in range(2):  # flips
+            for _ in range(4):  # rotations
+                if edge_tile.left_edge() is not None and np.array_equal(edge_tile.left_edge(), tile.right_edge()):
+                    edge_tile.left = tile
+                    tile.right = edge_tile
+                    return True
+                if edge_tile.right_edge() is not None and np.array_equal(edge_tile.right_edge(), tile.left_edge()):
+                    edge_tile.right = tile
+                    tile.left = edge_tile
+                    return True
+                if edge_tile.top_edge() is not None and np.array_equal(edge_tile.top_edge(), tile.bottom_edge()):
+                    edge_tile.up = tile
+                    tile.down = edge_tile
+                    return True
+                if edge_tile.bottom_edge() is not None and np.array_equal(edge_tile.bottom_edge(), tile.top_edge()):
+                    edge_tile.down = tile
+                    tile.up = edge_tile
+                    return True
+                tile.rotate_left()
+            tile.flip()
         return False
 
 
