@@ -3,7 +3,7 @@ import os
 
 
 @click.command()
-@click.option('-d', '--day', required=True, type=int, help='Day you want to create')
+@click.argument('day', nargs=1, type=int)
 @click.option('-t', '--create-test-file', is_flag=True, help='Create a test file')
 def create_day_stub(day: int, create_test_file: bool):
     src_path = f'src/{day:02}'
