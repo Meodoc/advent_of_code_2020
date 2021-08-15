@@ -7,21 +7,12 @@ def part_a(data: list):
     while len(p1_cards) > 0 and len(p2_cards) > 0:
         play_move(p1_cards, p2_cards) if p1_cards[0] > p2_cards[0] else play_move(p2_cards, p1_cards)
 
-    return calculate_result(p1_cards if len(p2_cards) == 0 else p2_cards)
+    return sum(idx * card for idx, card in enumerate(reversed(p1_cards if len(p2_cards) == 0 else p2_cards), 1))
 
 
 def play_move(winner_cards: list[int], loser_cards: list[int]) -> None:
-    winner_cards.append(winner_cards[0])
-    winner_cards.append(loser_cards[0])
-    winner_cards.pop(0)
-    loser_cards.pop(0)
-
-
-def calculate_result(cards: list[int]) -> int:
-    score = 0
-    for idx, elem in enumerate(reversed(cards), 1):
-        score += idx * elem
-    return score
+    winner_cards.append(winner_cards.pop(0))
+    winner_cards.append(loser_cards.pop(0))
 
 
 def part_b(data: list):
