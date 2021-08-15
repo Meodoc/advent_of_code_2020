@@ -5,7 +5,7 @@ import os
 @click.command()
 @click.argument('day', nargs=1, type=int)
 @click.option('-t', '--create-test-file', is_flag=True, help='Create a test file')
-def create_day_stub(day: int, create_test_file: bool):
+def generate_day_template(day: int, create_test_file: bool):
     src_path = f'src/{day:02}'
     data_path = f'data/{day:02}'
     file_path = f'{src_path}/day{day}.py'
@@ -48,4 +48,4 @@ def _prompt_override(file_name: str):
 
 
 if __name__ == '__main__':
-    create_day_stub()
+    generate_day_template()
