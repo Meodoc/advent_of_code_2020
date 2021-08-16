@@ -5,48 +5,67 @@ from itertools import cycle
 import numpy as np
 
 
-def part_a(data: list):
-    cur_idx = 0
-    current = data[cur_idx]
-    total_cups = len(data)
+def play(follow: dict, total_cups: int, moves: int):
+    current = list(follow.keys())[0]
 
-    for _ in range(100):
-        # pick up and remove
-        pick_up = [data[idx % total_cups] for idx in range(cur_idx + 1, cur_idx + 4)]
-        for i in range(3):
-            data.remove(pick_up[i])
+    for _ in range(moves):
+        # "pick up" cups
+        pick_up = [_get_next(current, follow, i) for i in range(1, 4)]
+        follow[current] = _get_next(current, follow, 4)
 
-        # select destination cup
+        # get destination cup
         destination = (current - 2) % total_cups + 1
-        while destination not in data:
+        while destination in pick_up:
             destination = (destination - 2) % total_cups + 1
-        dst_idx = data.index(destination)
 
-        # insert picked up cups
-        data[dst_idx + 1:dst_idx + 1] = pick_up
+        # place cups clockwise to destination cup
+        follow[pick_up[-1]] = follow[destination]
+        follow[destination] = pick_up[0]
 
         # select new current cup
-        cur_idx = (data.index(current) + 1) % total_cups
-        current = data[cur_idx]
-
-    data = deque(data)
-    data.rotate(total_cups - data.index(1))
-    return ''.join(lmap(str, list(data)[1:]))
+        current = follow[current]
 
 
-def part_b(data: list):
-    return None
+def _get_next(cur: int, follow: dict, n: int) -> int:
+    for _ in range(n):
+        cur = follow[cur]
+    return cur
+
+
+def part_a(cups: list, follow: dict):
+    play(follow, total_cups=len(cups), moves=100)
+
+    result, current = '', 1
+    for _ in range(len(cups) - 1):
+        result += str(follow[current])
+        current = follow[current]
+
+    return result
+
+
+def part_b(cups: list, follow: dict):
+    total_cups = 1_000_000
+
+    follow[cups[-1]] = len(cups) + 1
+    for i in range(len(cups) + 1, total_cups):
+        follow[i] = i % total_cups + 1
+    follow[total_cups] = cups[0]
+
+    play(follow, total_cups=total_cups, moves=10_000_000)
+
+    return _get_next(1, follow, 1) * _get_next(1, follow, 2)
 
 
 def load(p: Problem):
-    return lmap(int, p.raw_data())
+    data = lmap(int, p.raw_data())
+    return [data, dict(zip(data, np.roll(data, -1)))]
 
 
 if __name__ == '__main__':
     problem = Problem(23)
 
-    print(part_a(load(problem)))
-    # print(part_b(load(problem)))
+    # print(part_a(*load(problem)))
+    # print(part_b(*load(problem)))
 
-    problem.submit(part_a(load(problem)), 'a')
-    # problem.submit(part_b(load(problem)), 'b')
+    # problem.submit(part_a(*load(problem)), 'a')
+    problem.submit(part_b(*load(problem)), 'b')
