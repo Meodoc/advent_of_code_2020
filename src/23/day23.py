@@ -1,38 +1,37 @@
 from src.problem import Problem
 from collections import deque
 from funcy import lmap
+from itertools import cycle
 import numpy as np
 
 
-def part_a(data: list[int]):
-    largest = len(data)
+def part_a(data: list):
     cur_idx = 0
-    for _ in range(10):
-        cur_idx = _move(cur_idx % len(data), largest, data)
-    print(data)
-    return None
-
-
-def _move(cur_idx: int, largest: int, data: list[int]) -> int:
     current = data[cur_idx]
-    pick_up = data[cur_idx + 1:(cur_idx + 4) % len(data)]
-    for cup in pick_up:
-        data.remove(cup)
-    # pick_up = [data.pop((cur_idx + 1) % len(data)) for _ in range(3)]
-    dst_cup = _find_dst_cup(current, largest, pick_up, data)
-    data[dst_cup + 1:dst_cup + 1] = pick_up
-    return data.index(current) + 1
+    total_cups = len(data)
 
+    for _ in range(100):
+        # pick up and remove
+        pick_up = [data[idx % total_cups] for idx in range(cur_idx + 1, cur_idx + 4)]
+        for i in range(3):
+            data.remove(pick_up[i])
 
-def _find_dst_cup(current: int, largest: int, pick_up: list[int], data: list[int]) -> int:
-    current = wrap(current - 1, 1, largest)
-    while current in pick_up:
-        current = wrap(current - 1, 1, largest)
-    return data.index(current)
+        # select destination cup
+        destination = (current - 2) % total_cups + 1
+        while destination not in data:
+            destination = (destination - 2) % total_cups + 1
+        dst_idx = data.index(destination)
 
+        # insert picked up cups
+        data[dst_idx + 1:dst_idx + 1] = pick_up
 
-def wrap(n: int, smallest: int, largest: int) -> int:
-    return (n - smallest) % largest + smallest
+        # select new current cup
+        cur_idx = (data.index(current) + 1) % total_cups
+        current = data[cur_idx]
+
+    data = deque(data)
+    data.rotate(total_cups - data.index(1))
+    return ''.join(lmap(str, list(data)[1:]))
 
 
 def part_b(data: list):
@@ -40,7 +39,7 @@ def part_b(data: list):
 
 
 def load(p: Problem):
-    return lmap(int, p.raw_test_data())
+    return lmap(int, p.raw_data())
 
 
 if __name__ == '__main__':
@@ -49,5 +48,5 @@ if __name__ == '__main__':
     print(part_a(load(problem)))
     # print(part_b(load(problem)))
 
-    # problem.submit(part_a(load(problem)), 'a')
+    problem.submit(part_a(load(problem)), 'a')
     # problem.submit(part_b(load(problem)), 'b')
