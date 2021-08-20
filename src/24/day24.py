@@ -2,11 +2,18 @@ from __future__ import annotations
 from src.problem import Problem
 from dataclasses import dataclass, field
 from collections import defaultdict
+from copy import deepcopy
 import re
 import funcy
 
 WHITE, BLACK = False, True
 PATTERN = re.compile('e|se|sw|w|nw|ne')
+DIRECTIONS = {'e': lambda x, y: (x + 1, y),
+              'se': lambda x, y: (x + 1, y - 1),
+              'sw': lambda x, y: (x, y - 1),
+              'w': lambda x, y: (x - 1, y),
+              'nw': lambda x, y: (x - 1, y + 1),
+              'ne': lambda x, y: (x, y + 1)}
 
 
 @dataclass(unsafe_hash=True)
@@ -17,47 +24,70 @@ class Tile:
     def flip(self) -> None:
         self.state = not self.state
 
+    def is_adj(self, x: int, y: int):
+        return abs(self.pos[0] - x) <= 1 and abs(self.pos[1] - y) <= 1 and \
+               (self.pos[0] + 1, self.pos[1] + 1) != (x, y) and \
+               (self.pos[0] - 1, self.pos[1] - 1) != (x, y) and \
+               self.pos != (x, y)
+
+    def adj_indices(self) -> list:
+        return [(self.pos[0] + 1, self.pos[1]), (self.pos[0], self.pos[1] + 1), (self.pos[0] - 1, self.pos[1]),
+                (self.pos[0], self.pos[1] - 1), (self.pos[0] + 1, self.pos[1] - 1), (self.pos[0] - 1, self.pos[1] + 1)]
+
 
 class HexGrid:
     tiles = {Tile((0, 0))}
 
     def find_and_flip(self, instructions: list) -> None:
-        # e, se, sw, w, nw, and ne
-        for instruction in instructions:
+        for instr in instructions:
             x, y = 0, 0
-            for direction in instruction:
-                if direction == 'e':
-                    x += 1
-                elif direction == 'se':
-                    x += 1
-                    y -= 1
-                elif direction == 'sw':
-                    y -= 1
-                elif direction == 'w':
-                    x -= 1
-                elif direction == 'nw':
-                    x -= 1
-                    y += 1
-                elif direction == 'ne':
-                    y += 1
-            self.tiles.add(Tile((x, y)))
+            for dir_ in instr:
+                x, y = self.apply_direction(dir_, x, y)
+            tile = Tile((x, y))
+            self.tiles.add(tile)
+            self.tiles.update(Tile(pos) for pos in tile.adj_indices())
             for tile in self.tiles:
                 if tile.pos == (x, y):
                     tile.flip()
                     break
             # list(tile for tile in self.tiles if tile.pos == (x, y))[0].flip()
 
-    def count(self, color: bool):
-        return len([tile for tile in self.tiles if tile.state == color])
+    def live(self, iterations: int) -> None:
+        for _ in range(iterations):
+            nxt = deepcopy(self.tiles)
+            for tile in self.tiles:
+                adj_black = self.count_color(BLACK, self.adj(tile))
+                if tile.state == BLACK and (adj_black == 0 or adj_black > 2):
+                    list(n for n in nxt if n.pos == tile.pos)[0].flip()
+                elif tile.state == WHITE and adj_black == 2:
+                    n = list(n for n in nxt if n.pos == tile.pos)[0]
+                    n.flip()
+                    nxt.update(Tile(pos) for pos in n.adj_indices())
+            self.tiles = nxt
+            print("Day", _ + 1, self.count_color(BLACK))
+
+    @staticmethod
+    def apply_direction(dir_: str, x: int, y: int) -> tuple:
+        return DIRECTIONS[dir_](x, y)
+
+    def count_color(self, color: bool, tiles=None) -> int:
+        return len([tile for tile in (tiles if tiles else self.tiles) if tile.state == color])
+
+    def adj(self, ref: Tile) -> list:
+        return [tile for tile in self.tiles if tile.is_adj(*ref.pos)]
 
 
 def part_a(instructions: list):
     hexgrid = HexGrid()
     hexgrid.find_and_flip(instructions)
-    return hexgrid.count(BLACK)
+    return hexgrid.count_color(BLACK)
 
 
-def part_b(data: list):
+def part_b(instructions: list):
+    hexgrid = HexGrid()
+    hexgrid.find_and_flip(instructions)
+    print(hexgrid.count_color(BLACK))
+    hexgrid.live(iterations=100)
     return None
 
 
@@ -68,8 +98,8 @@ def load(p: Problem):
 if __name__ == '__main__':
     problem = Problem(24, test=True)
 
-    print(part_a(load(problem)))
-    # print(part_b(load(problem)))
+    # print(part_a(load(problem)))
+    print(part_b(load(problem)))
 
     # problem.submit(part_a(load(problem)), 'a')
     # problem.submit(part_b(load(problem)), 'b')
