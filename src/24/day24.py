@@ -36,7 +36,7 @@ class Tile:
 
 
 class HexGrid:
-    tiles = {Tile((0, 0))}
+    tiles = {(0, 0): Tile((0, 0))}
 
     def find_and_flip(self, instructions: list) -> None:
         for instr in instructions:
@@ -44,25 +44,26 @@ class HexGrid:
             for dir_ in instr:
                 x, y = self.apply_direction(dir_, x, y)
             tile = Tile((x, y))
-            self.tiles.add(tile)
-            self.tiles.update(Tile(pos) for pos in tile.adj_indices())
-            for tile in self.tiles:
-                if tile.pos == (x, y):
-                    tile.flip()
-                    break
-            # list(tile for tile in self.tiles if tile.pos == (x, y))[0].flip()
+            if (x, y) not in self.tiles:
+                self.tiles[(x, y)] = tile
+            for adj in tile.adj_indices():
+                if adj not in self.tiles:
+                    self.tiles[adj] = Tile(adj)
+            self.tiles[(x, y)].flip()
 
     def live(self, iterations: int) -> None:
         for _ in range(iterations):
             nxt = deepcopy(self.tiles)
-            for tile in self.tiles:
+            for pos, tile in self.tiles.items():
                 adj_black = self.count_color(BLACK, self.adj(tile))
                 if tile.state == BLACK and (adj_black == 0 or adj_black > 2):
-                    list(n for n in nxt if n.pos == tile.pos)[0].flip()
+                    nxt[tile.pos].flip()
                 elif tile.state == WHITE and adj_black == 2:
-                    n = list(n for n in nxt if n.pos == tile.pos)[0]
-                    n.flip()
-                    nxt.update(Tile(pos) for pos in n.adj_indices())
+                    nxt_tile = nxt[tile.pos]
+                    nxt_tile.flip()
+                    for adj in nxt_tile.adj_indices():
+                        if adj not in nxt:
+                            nxt[adj] = Tile(adj)
             self.tiles = nxt
             print("Day", _ + 1, self.count_color(BLACK))
 
@@ -70,11 +71,11 @@ class HexGrid:
     def apply_direction(dir_: str, x: int, y: int) -> tuple:
         return DIRECTIONS[dir_](x, y)
 
-    def count_color(self, color: bool, tiles=None) -> int:
-        return len([tile for tile in (tiles if tiles else self.tiles) if tile.state == color])
+    def count_color(self, color: bool, tiles: list = None) -> int:
+        return len([tile for tile in (tiles if tiles else self.tiles.values()) if tile.state == color])
 
     def adj(self, ref: Tile) -> list:
-        return [tile for tile in self.tiles if tile.is_adj(*ref.pos)]
+        return [tile for tile in self.tiles.values() if tile.is_adj(*ref.pos)]
 
 
 def part_a(instructions: list):
