@@ -26,7 +26,7 @@ def generate_day_template(day: int, create_test_file: bool):
                      "def part_b(data: list):\n    return None\n\n\n"
                      "def load(p: Problem):\n    return p.data()\n\n\n"
                      "if __name__ == '__main__':\n"
-                     f"    problem = Problem({day})\n\n"
+                     f"    problem = Problem({day}, test=True)\n\n"
                      "    print(part_a(load(problem)))\n"
                      "    # print(part_b(load(problem)))\n\n"
                      "    # problem.submit(part_a(load(problem)), 'a')\n"
