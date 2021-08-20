@@ -3,44 +3,58 @@ from src.problem import Problem
 from dataclasses import dataclass, field
 from collections import defaultdict
 import re
+import funcy
 
-PATTERN = re.compile('e|se|sw|w|nw|ne')
 WHITE, BLACK = False, True
+PATTERN = re.compile('e|se|sw|w|nw|ne')
 
 
+@dataclass(unsafe_hash=True)
 class Tile:
     state = WHITE
-    neigh = defaultdict(lambda: Tile())
+    pos: tuple
 
-    def flip(self):
+    def flip(self) -> None:
         self.state = not self.state
 
 
 class HexGrid:
-    _start = Tile()
+    tiles = {Tile((0, 0))}
 
-    def flip(self, instr: list):
-        dest = self._traverse(instr)
-        dest.flip()
+    def find_and_flip(self, instructions: list) -> None:
+        # e, se, sw, w, nw, and ne
+        for instruction in instructions:
+            x, y = 0, 0
+            for direction in instruction:
+                if direction == 'e':
+                    x += 1
+                elif direction == 'se':
+                    x += 1
+                    y -= 1
+                elif direction == 'sw':
+                    y -= 1
+                elif direction == 'w':
+                    x -= 1
+                elif direction == 'nw':
+                    x -= 1
+                    y += 1
+                elif direction == 'ne':
+                    y += 1
+            self.tiles.add(Tile((x, y)))
+            for tile in self.tiles:
+                if tile.pos == (x, y):
+                    tile.flip()
+                    break
+            # list(tile for tile in self.tiles if tile.pos == (x, y))[0].flip()
 
-    def _traverse(self, instr: list):
-        cur = self._start
-        for d in instr:
-            nxt = cur.neigh[d]
-            nxt.neigh[self.adj(d)] = cur
-            cur = nxt
-        return cur
-
-    @staticmethod
-    def adj(d: str):
-        return d.translate(str.maketrans('nesw', 'swne'))
+    def count(self, color: bool):
+        return len([tile for tile in self.tiles if tile.state == color])
 
 
-def part_a(instr: list):
+def part_a(instructions: list):
     hexgrid = HexGrid()
-    hexgrid.flip(instr[0])
-
-    return None
+    hexgrid.find_and_flip(instructions)
+    return hexgrid.count(BLACK)
 
 
 def part_b(data: list):
@@ -48,11 +62,11 @@ def part_b(data: list):
 
 
 def load(p: Problem):
-    return [re.findall(PATTERN, instr) for instr in p.test_data()]
+    return [re.findall(PATTERN, instr) for instr in p.data()]
 
 
 if __name__ == '__main__':
-    problem = Problem(24)
+    problem = Problem(24, test=True)
 
     print(part_a(load(problem)))
     # print(part_b(load(problem)))
