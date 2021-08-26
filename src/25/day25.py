@@ -6,19 +6,17 @@ def transform(x: int, subj: int):
 
 
 def part_a(pub_card: int, pub_door: int):
-    loop_card, loop_door = None, None
     x, loop = 1, 1
-    while not loop_card or not loop_door:
+    while True:
         x = transform(x, subj=7)
-        if x == pub_card:
-            loop_card = loop
-        if x == pub_door:
-            loop_door = loop
+        if x in (pub_card, pub_door):
+            break
         loop += 1
 
+    subject = pub_card if x == pub_door else pub_card
     x = 1
-    for _ in range(loop_card):
-        x = transform(x, subj=pub_door)
+    for _ in range(loop):
+        x = transform(x, subject)
 
     return x
 
@@ -30,6 +28,6 @@ def load(p: Problem):
 if __name__ == '__main__':
     problem = Problem(25, test=False)
 
-    # print(part_a(*load(problem)))
+    print(part_a(*load(problem)))
 
     # problem.submit(part_a(*load(problem)), 'a')
