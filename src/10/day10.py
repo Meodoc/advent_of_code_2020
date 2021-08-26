@@ -1,7 +1,5 @@
 from src.problem import Problem
 
-import itertools as it
-
 
 def part_a(data: list):
     diffs = list(map(lambda x1, x2: x2 - x1, data, data[1:]))
@@ -9,22 +7,14 @@ def part_a(data: list):
 
 
 def part_b(data: list):
-    print(data)
-    arr = count_arr(data)
+    arr = [0] * len(data)
+    for i in reversed(range(0, len(data) - 3)):
+        arr[i] = arr[i + 1]
+        for skip in (2, 3):  # can possible only skip next or the next next item
+            if data[i + skip] - data[i] <= 3:
+                arr[i] += arr[i + skip] + 1
 
-    return arr
-
-
-def count_arr(data: list):
-    arr = 1
-    for i in range(len(data)):
-        for skip in range(2, 4):
-            if i + skip < len(data) and data[i + skip] - data[i] <= 3:
-                arr += count_arr(data[i + skip:])
-                # print(data[:i + 1] + data[i + skip:])
-            else:
-                break
-    return arr
+    return arr[0] + 1  # add the initial arrangement
 
 
 def load(p: Problem):
@@ -32,15 +22,10 @@ def load(p: Problem):
 
 
 if __name__ == '__main__':
-    problem = Problem(10, test=True)
+    problem = Problem(10, test=False)
 
     # print(part_a(load(problem)))
-    print(part_b(load(problem)))
+    # print(part_b(load(problem)))
 
-    # test solution: 19208
-
-    # 36132988816414656965872925540352 too high
-    # 2251799813685248 too high
-
-    # problem.submit(part_a(load(problem)), 'a')  # 2775
+    # problem.submit(part_a(load(problem)), 'a')
     # problem.submit(part_b(load(problem)), 'b')
