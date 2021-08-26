@@ -89,7 +89,7 @@ def part_b(instructions: list):
     hexgrid.find_and_flip(instructions)
     print(hexgrid.count_color(BLACK))
     hexgrid.live(iterations=100)
-    return None
+    return hexgrid.count_color(BLACK)
 
 
 def load(p: Problem):
@@ -97,10 +97,10 @@ def load(p: Problem):
 
 
 if __name__ == '__main__':
-    problem = Problem(24, test=True)
+    problem = Problem(24, test=False)
 
     # print(part_a(load(problem)))
-    print(part_b(load(problem)))
+    # print(part_b(load(problem)))
 
     # problem.submit(part_a(load(problem)), 'a')
-    # problem.submit(part_b(load(problem)), 'b')
+    problem.submit(part_b(load(problem)), 'b')
